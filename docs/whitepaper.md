@@ -28,13 +28,14 @@ This whitepaper details the architecture, governance mechanics, tokenomics, and 
 10. [Node Network](#10-node-network)
 11. [Research Programs](#11-research-programs)
 12. [Healthcare Infrastructure Program](#12-healthcare-infrastructure-program)
-13. [Why Hold CITIZEN — Value Accrual](#13-why-hold-citizen--value-accrual)
-14. [Tokenomics](#14-tokenomics)
-15. [Transparency and Accountability](#15-transparency-and-accountability)
-16. [Risk and Compliance](#16-risk-and-compliance)
-17. [Roadmap](#17-roadmap)
-18. [Technical Specifications](#18-technical-specifications)
-19. [Glossary](#19-glossary)
+13. [How Citizens Invest & Grow Their Holdings](#13-how-citizens-invest--grow-their-holdings)
+14. [Why Hold CITIZEN — Value Accrual](#14-why-hold-citizen--value-accrual)
+15. [Tokenomics](#15-tokenomics)
+16. [Transparency and Accountability](#16-transparency-and-accountability)
+17. [Risk and Compliance](#17-risk-and-compliance)
+18. [Roadmap](#18-roadmap)
+19. [Technical Specifications](#19-technical-specifications)
+20. [Glossary](#20-glossary)
 
 ---
 
@@ -402,11 +403,93 @@ Revenue flows back to the on-chain treasury, where a governance-set percentage i
 
 ---
 
-## 13. Why Hold CITIZEN — Value Accrual
+## 13. How Citizens Invest & Grow Their Holdings
+
+### 13.1 One Token, Many Units
+
+There is only **one type of token: CITIZEN.** But you can own as many CITIZEN as you want — 10, 1,000, or 1,000,000. Think of it like a stock: there's one class of share, but you buy as many shares as you choose.
+
+| Concept | Explanation |
+|---|---|
+| Token name | CITIZEN |
+| Smallest unit | ucitizen (1 CITIZEN = 1,000,000 ucitizen) |
+| Total supply cap | 1,000,000,000 CITIZEN — once minted, no more are created |
+| Who can hold? | Anyone with a wallet — verified citizens get extra governance rights |
+| Can I buy more? | Yes — there is no limit on how many tokens you hold |
+
+### 13.2 Ways to Invest (Grow Your Holdings)
+
+Citizens have **six concrete ways** to accumulate more CITIZEN tokens and increase the value of the ones they already hold:
+
+#### 1. Staking (Earn New Tokens Every Block)
+Lock your CITIZEN in the staking contract and earn a share of **newly minted tokens + transaction fees** every block (~6 seconds). The more you stake, the larger your share.
+
+> *Example: If total staked supply is 100M CITIZEN and you stake 10,000 CITIZEN, you receive 0.01% of every block's rewards.*
+
+#### 2. Governance Participation Bonus
+Citizens who **actively vote on proposals** earn a yield multiplier. If you stake *and* vote, your effective yield is higher than someone who only stakes. This rewards civic engagement, not just capital.
+
+#### 3. Running a Node
+Operate a validator node from home (Raspberry Pi) or professionally. Node operators earn:
+- Block rewards (emissions)
+- Fee share
+- Extra governance bonus if they also vote
+
+#### 4. Supplying Liquidity (Future — DEX Listing)
+Once CITIZEN is listed on a decentralised exchange (DEX), holders can provide liquidity pairs (e.g. CITIZEN/ATOM or CITIZEN/USDC) and earn trading fees. This is additional income on top of staking.
+
+#### 5. Buy and Hold (Scarce Supply + Growing Revenue)
+Because supply is **permanently capped** and the network continuously generates real-world revenue (from hospitals, patents, factories, warehouses), each CITIZEN token represents a growing share of the network's total income. Holding is itself an investment strategy, similar to owning equity in a growing company.
+
+#### 6. Reinvesting Yields (Compounding)
+All staking rewards, fee shares, and yield distributions are paid in CITIZEN. You can **re-stake** those earnings to compound your position — your rewards earn rewards.
+
+### 13.3 What Makes Each Token More Valuable Over Time
+
+The price of one CITIZEN token is driven by supply and demand. Here's why demand rises while supply stays capped:
+
+```
+  SUPPLY (fixed)                       DEMAND (growing)
+  ─────────────                        ─────────────────
+  ✖ Capped at 1B CITIZEN              ✔ Real income rises each quarter
+  ✖ No inflation after cap             ✔ More hospitals, factories, patents
+  ✖ Optional burn (deflationary)       ✔ New citizens join → buy CITIZEN
+  ✖ Stakers lock tokens (reduces       ✔ DEX liquidity demand
+    circulating supply)                ✔ Node operators lock stake
+                                       ✔ Governance requires holding
+```
+
+**In plain English:** The pie (total tokens) doesn't get bigger, but the income flowing through it does. So each slice (your tokens) becomes worth more.
+
+### 13.4 Worked Example: Year 1 → Year 5
+
+| Metric | Year 1 | Year 3 | Year 5 |
+|---|---|---|---|
+| Your holdings | 10,000 CITIZEN | 13,200 CITIZEN (compounded staking) | 16,800 CITIZEN |
+| Network revenue stream | 1 hospital | 3 hospitals + 2 patents | 5 hospitals + 8 patents + 1 factory |
+| Your annual yield | ~8% staking only | ~12% staking + infrastructure yield | ~15% all income streams |
+| Governance bonus | +1.2x (you vote) | +1.5x (active voter) | +1.8x (delegate + voter) |
+
+*Figures are illustrative. Actual yields depend on total staked supply, network revenue, and governance decisions.*
+
+### 13.5 How Is This Different From Other Crypto?
+
+| Factor | Typical Crypto Token | CITIZEN |
+|---|---|---|
+| Income source | None — speculative only | Hospitals, patents, factories, fees |
+| Supply model | Often inflationary forever | Hard capped at 1B |
+| Why price rises | Hype, narratives | Growing real revenue per token |
+| Governance power | Vote weight = wealth | One person, one vote (fair) |
+| Compounding | Only if you trade | Automatic via restaking |
+| Exit strategy | Sell before crash | Hold for lifetime income |
+
+---
+
+## 14. Why Hold CITIZEN — Value Accrual
 
 CITIZEN is not a speculative token — it is a **productive asset** backed by real-world income streams.
 
-### 13.1 Income Streams
+### 14.1 Income Streams
 
 | Stream | Source | Distribution | Frequency |
 |---|---|---|---|
@@ -416,7 +499,7 @@ CITIZEN is not a speculative token — it is a **productive asset** backed by re
 | Fee Share | Transaction fees on the network | Pro-rata to stakers | Per block |
 | Governance Bonus | Active voting participation bonus | Multiplier on yields | Monthly |
 
-### 13.2 Compounding Value Flywheel
+### 14.2 Compounding Value Flywheel
 
 The model creates a compounding cycle:
 
@@ -436,7 +519,7 @@ Citizens buy CITIZEN → Treasury grows → Funds research & buildings
                                     (Cycle repeats — value compounds)
 ```
 
-### 13.3 Why This Matters
+### 14.3 Why This Matters
 
 1. **Real income, not speculation.** Holders earn from hospitals, patents, and infrastructure.
 2. **Compounding returns.** Revenue funds more projects, generating more revenue.
@@ -447,9 +530,9 @@ Citizens buy CITIZEN → Treasury grows → Funds research & buildings
 
 ---
 
-## 14. Tokenomics
+## 15. Tokenomics
 
-### 14.1 Supply Model
+### 15.1 Supply Model
 
 | Parameter | Value |
 |---|---|
@@ -460,7 +543,7 @@ Citizens buy CITIZEN → Treasury grows → Funds research & buildings
 | Supply Model | Capped with declining emission schedule |
 | Deflationary Levers | Optional fee burns or buyback (governance vote) |
 
-### 14.2 Emission Schedule
+### 15.2 Emission Schedule
 
 Tokens are emitted on a block-by-block declining schedule across four phases:
 
@@ -471,7 +554,7 @@ Tokens are emitted on a block-by-block declining schedule across four phases:
 | Phase 3 (Stability) | Years 5–10 | ~75% reduction | ~85% of max |
 | Phase 4 (Terminal) | Year 10+ | Minimal rate | 100% of max (cap) |
 
-### 14.3 Allocation Split (per block)
+### 15.3 Allocation Split (per block)
 
 | Recipient | Share |
 |---|---|
@@ -480,7 +563,7 @@ Tokens are emitted on a block-by-block declining schedule across four phases:
 
 The treasury share ensures continuous public-benefit funding throughout the emission schedule. After emissions end, the protocol sustains itself through transaction fees and revenue from funded assets.
 
-### 14.4 No Pre-mine, No VC Allocation
+### 15.4 No Pre-mine, No VC Allocation
 
 All CITIZEN tokens are emitted through the staking contract. There is:
 - No pre-mine
@@ -492,7 +575,7 @@ Every token in existence was earned through staking and network participation. T
 
 ---
 
-## 15. Transparency and Accountability
+## 16. Transparency and Accountability
 
 Transparency is a first-class feature, not an afterthought:
 
@@ -504,9 +587,9 @@ Transparency is a first-class feature, not an afterthought:
 
 ---
 
-## 16. Risk and Compliance
+## 17. Risk and Compliance
 
-### 16.1 Risk Matrix
+### 17.1 Risk Matrix
 
 | Risk | Severity | Mitigation |
 |---|---|---|
@@ -527,7 +610,7 @@ Transparency is a first-class feature, not an afterthought:
 
 ---
 
-## 17. Roadmap
+## 18. Roadmap
 
 ### Phase 0: Foundations
 - Define scope, success criteria, and technical architecture.
@@ -564,9 +647,9 @@ Transparency is a first-class feature, not an afterthought:
 
 ---
 
-## 18. Technical Specifications
+## 19. Technical Specifications
 
-### 18.1 Chain Configuration
+### 19.1 Chain Configuration
 
 | Parameter | Value |
 |---|---|
@@ -579,11 +662,11 @@ Transparency is a first-class feature, not an afterthought:
 | Decimal Places | 6 |
 | Bech32 Prefix | citizen |
 
-### 18.2 Contract Addresses
+### 19.2 Contract Addresses
 
 Deployed on testnet. Mainnet addresses will be published at launch.
 
-### 18.3 API Endpoints
+### 19.3 API Endpoints
 
 | Service | Description |
 |---|---|
@@ -594,7 +677,7 @@ Deployed on testnet. Mainnet addresses will be published at launch.
 
 ---
 
-## 19. Glossary
+## 20. Glossary
 
 | Term | Definition |
 |---|---|

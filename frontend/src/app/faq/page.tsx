@@ -237,6 +237,49 @@ const faqItems: FAQItem[] = [
       </p>
     ),
   },
+  {
+    category: "Tokens & Value",
+    question: "Can I own more than one CITIZEN token?",
+    answer: (
+      <div className="space-y-2">
+        <p>
+          Yes — you can own as many CITIZEN tokens as you want. There is only
+          <strong> one type of token</strong>, but you can hold 10, 10,000, or
+          1,000,000 of them. Think of it like shares in a company: one class of
+          share, but you buy as many as you choose.
+        </p>
+        <p>
+          The more CITIZEN you stake, the larger your share of block rewards,
+          fee income, and real-world revenue. There&apos;s no limit on how many
+          you can accumulate.
+        </p>
+      </div>
+    ),
+  },
+  {
+    category: "Tokens & Value",
+    question: "How do I invest and make my tokens more valuable?",
+    answer: (
+      <div className="space-y-2">
+        <p>There are six ways to grow your holdings and increase value:</p>
+        <ol className="list-decimal pl-5 space-y-1">
+          <li><strong>Stake:</strong> Lock your CITIZEN to earn block rewards + fee share every ~6 seconds.</li>
+          <li><strong>Vote:</strong> Active governance participants earn a yield multiplier on top of staking rewards.</li>
+          <li><strong>Run a node:</strong> Operate a validator (even from a Raspberry Pi) for additional rewards.</li>
+          <li><strong>Compound:</strong> Reinvest your staking yields — your rewards earn rewards.</li>
+          <li><strong>Hold:</strong> Supply is capped at 1B while network revenue grows from hospitals, patents, and factories. Each token represents a growing slice of income.</li>
+          <li><strong>Provide liquidity:</strong> (future) Earn DEX trading fees by supplying CITIZEN pairs.</li>
+        </ol>
+        <p className="text-sm text-gray-500">
+          See Section 13 of the{" "}
+          <a href="https://github.com/Mopperr/citizen-ledger/blob/main/docs/whitepaper.md" className="text-citizen-600 hover:text-citizen-700 underline" target="_blank" rel="noopener noreferrer">
+            Whitepaper
+          </a>{" "}
+          for detailed examples and projections.
+        </p>
+      </div>
+    ),
+  },
 
   // ── Governance
   {
