@@ -12,16 +12,21 @@ function useLiveStats() {
     treasury: "—",
     proposals: "—",
     validators: "—",
+    isLive: false,
   });
 
   useEffect(() => {
     async function fetchStats() {
       try {
         const statusRes = await fetch(`${RPC_ENDPOINT}/status`);
+        if (!statusRes.ok) throw new Error("RPC not reachable");
         const statusData = await statusRes.json();
         const height = statusData?.result?.sync_info?.latest_block_height || "—";
-        setStats((s) => ({ ...s, blockHeight: Number(height).toLocaleString() }));
-      } catch {}
+        setStats((s) => ({ ...s, blockHeight: Number(height).toLocaleString(), isLive: true }));
+      } catch {
+        // Node not reachable — show offline state gracefully
+        setStats((s) => ({ ...s, blockHeight: "—", isLive: false }));
+      }
     }
     fetchStats();
     const interval = setInterval(fetchStats, 5000);
@@ -48,8 +53,17 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-medium mb-8 border border-white/20">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              Live on Local Testnet — Block #{stats.blockHeight}
+              {stats.isLive ? (
+                <>
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  Live on Testnet — Block #{stats.blockHeight}
+                </>
+              ) : (
+                <>
+                  <span className="w-2 h-2 bg-yellow-400 rounded-full" />
+                  Testnet — Launching Soon
+                </>
+              )}
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">

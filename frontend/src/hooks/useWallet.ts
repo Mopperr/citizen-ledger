@@ -26,7 +26,7 @@ interface WalletState {
   error: string | null;
   provider: WalletProvider | null;
 
-  connect: (preferredProvider?: WalletProvider) => Promise<void>;
+  connect: (preferredProvider?: WalletProvider, silent?: boolean) => Promise<void>;
   disconnect: () => void;
   initQueryClient: () => Promise<void>;
   autoReconnect: () => Promise<void>;
@@ -135,7 +135,7 @@ export const useWallet = create<WalletState>((set, get) => ({
     }
   },
 
-  connect: async (preferredProvider?: WalletProvider) => {
+  connect: async (preferredProvider?: WalletProvider, silent = false) => {
     set({ isConnecting: true, error: null });
 
     try {
@@ -191,12 +191,18 @@ export const useWallet = create<WalletState>((set, get) => ({
 
       // Provide friendlier messages for common network errors
       if (msg === "Failed to fetch" || msg.includes("Failed to fetch")) {
-        msg = "Failed to reach the blockchain node. Make sure your local testnet is running (docker compose up).";
+        msg = "Blockchain node is not reachable. The testnet may not be running yet — please try again later.";
       } else if (msg.includes("Network request failed")) {
-        msg = "Network error — check that the RPC endpoint is reachable.";
+        msg = "Network error — the blockchain node could not be reached.";
       }
 
-      set({ error: msg, isConnecting: false });
+      // In silent mode (auto-reconnect), suppress error display
+      if (silent) {
+        console.warn("Silent wallet connect failed:", msg);
+        set({ isConnecting: false });
+      } else {
+        set({ error: msg, isConnecting: false });
+      }
       console.error("Wallet connection error:", e);
     }
   },
@@ -227,7 +233,8 @@ export const useWallet = create<WalletState>((set, get) => ({
       const wallet = await getWalletExtensionAsync(provider);
       if (!wallet) return;
 
-      await get().connect(provider);
+      // Auto-reconnect in silent mode — don't show error toast if node is unreachable
+      await get().connect(provider, true);
     } catch {
       // Silently fail — user can manually reconnect
     }
