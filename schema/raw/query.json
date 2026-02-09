@@ -101,6 +101,38 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "description": "Get slash history",
+      "type": "object",
+      "required": [
+        "slash_history"
+      ],
+      "properties": {
+        "slash_history": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint32",
+              "minimum": 0.0
+            },
+            "start_after": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   ]
 }

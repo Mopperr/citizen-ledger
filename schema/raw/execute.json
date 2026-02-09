@@ -90,6 +90,56 @@
         }
       },
       "additionalProperties": false
+    },
+    {
+      "description": "Slash a staker's stake (admin/governance only)",
+      "type": "object",
+      "required": [
+        "slash"
+      ],
+      "properties": {
+        "slash": {
+          "type": "object",
+          "required": [
+            "reason",
+            "staker"
+          ],
+          "properties": {
+            "reason": {
+              "type": "string"
+            },
+            "staker": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Update slash penalty rate (admin only)",
+      "type": "object",
+      "required": [
+        "update_slash_penalty"
+      ],
+      "properties": {
+        "update_slash_penalty": {
+          "type": "object",
+          "required": [
+            "slash_penalty_bps"
+          ],
+          "properties": {
+            "slash_penalty_bps": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   ],
   "definitions": {

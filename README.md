@@ -1,6 +1,21 @@
-# Citizen Ledger – CosmWasm Smart Contracts
+# Citizen Ledger
 
-A citizen-led, identity-gated blockchain for transparent governance, treasury management, and community-funded research. Built on Cosmos SDK with CosmWasm smart contracts.
+[![CI](https://github.com/Mopperr/citizen-ledger/actions/workflows/ci.yml/badge.svg)](https://github.com/Mopperr/citizen-ledger/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg)](https://www.rust-lang.org/)
+[![CosmWasm](https://img.shields.io/badge/CosmWasm-2.2-blue.svg)](https://cosmwasm.com/)
+
+**Governance by the People. Funded by the People. Built for the People.**
+
+A citizen-led blockchain network that verifies eligibility through privacy-preserving credentials, enables inclusive governance through one-person-one-vote, and funds public-benefit initiatives through a programmable on-chain treasury. Built on Cosmos SDK with CosmWasm smart contracts.
+
+## 🌟 Key Features
+
+- **🔐 Privacy-Preserving Identity** — ZK proof credentials without storing personal data on-chain
+- **🗳️ Fair Governance** — One-person-one-vote (no plutocracy) + quadratic voting for funding
+- **💰 Transparent Treasury** — Category-based allocations with real-time public tracking
+- **🎯 Milestone Grants** — Evidence-verified disbursements for research & infrastructure
+- **📈 Sustainable Tokenomics** — Capped supply with declining emission curve
 
 ## Architecture
 
@@ -107,8 +122,35 @@ bash deploy.sh  # outputs deployed-addresses.json
 - **Treasury Share**: Configurable percentage of emissions goes to community treasury
 - **Staking**: Standard reward-index model for proportional distribution
 
-## Related Documents
+## Additional Resources
 
-- [Whitepaper](../whitepaper-outline.md)
-- [Technical Design](../technical-design.md)
-- [Roadmap (50-step build plan)](../roadmap.md)
+| Resource | Description |
+|---|---|
+| [Faucet](faucet/) | Testnet token faucet service (Node.js) |
+| [Chain Registry](chain-registry/) | Cosmos chain-registry format metadata |
+| [Indexer](indexer/) | PostgreSQL indexer schema |
+| [Schemas](schema/) | JSON schemas for all contract messages |
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| [Whitepaper](../whitepaper-outline.md) | Project vision and governance philosophy |
+| [Technical Design](../technical-design.md) | Architecture and implementation details |
+| [Roadmap](../roadmap.md) | 50-step build plan |
+| [Testnet Launch Guide](docs/testnet-launch-guide.md) | Step-by-step testnet deployment |
+| [Node Operator Guide](docs/node-operator-guide.md) | Running a validator node |
+| [Mainnet Launch Plan](docs/mainnet-launch-plan.md) | Production deployment checklist |
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Run tests (`cargo test --workspace`)
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

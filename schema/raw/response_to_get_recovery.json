@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RecoveryResponse",
+  "type": "object",
+  "required": [
+    "execute_after",
+    "new_address",
+    "old_address",
+    "recovery_id",
+    "requested_at",
+    "status"
+  ],
+  "properties": {
+    "execute_after": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "new_address": {
+      "type": "string"
+    },
+    "old_address": {
+      "type": "string"
+    },
+    "recovery_id": {
+      "type": "string"
+    },
+    "requested_at": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

@@ -112,6 +112,12 @@
         "amount": {
           "$ref": "#/definitions/Uint128"
         },
+        "approved_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "completed": {
           "type": "boolean"
         },

@@ -1,0 +1,91 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "citizenledgertestnet",
+  "chain_type": "cosmos",
+  "chain_id": "citizen-testnet-1",
+  "website": "https://citizenledger.io",
+  "pretty_name": "Citizen Ledger Testnet",
+  "status": "live",
+  "network_type": "testnet",
+  "bech32_prefix": "citizen",
+  "daemon_name": "wasmd",
+  "node_home": "$HOME/.citizen-ledger",
+  "key_algos": ["secp256k1"],
+  "slip44": 118,
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "ucitizen",
+        "fixed_min_gas_price": 0.01,
+        "low_gas_price": 0.01,
+        "average_gas_price": 0.025,
+        "high_gas_price": 0.04
+      }
+    ]
+  },
+  "staking": {
+    "staking_tokens": [
+      {
+        "denom": "ucitizen"
+      }
+    ]
+  },
+  "codebase": {
+    "git_repo": "https://github.com/Mopperr/citizen-ledger",
+    "recommended_version": "v0.1.0",
+    "compatible_versions": ["v0.1.0"],
+    "cosmos_sdk_version": "v0.50",
+    "consensus": {
+      "type": "cometbft",
+      "version": "v0.38"
+    },
+    "cosmwasm_version": "v0.54",
+    "cosmwasm_enabled": true,
+    "genesis": {
+      "genesis_url": "https://raw.githubusercontent.com/Mopperr/citizen-ledger/main/genesis/testnet/genesis.json"
+    }
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://rpc.testnet.citizenledger.io",
+        "provider": "Citizen Ledger"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://rest.testnet.citizenledger.io",
+        "provider": "Citizen Ledger"
+      }
+    ],
+    "grpc": [
+      {
+        "address": "grpc.testnet.citizenledger.io:9090",
+        "provider": "Citizen Ledger"
+      }
+    ]
+  },
+  "explorers": [
+    {
+      "kind": "ping.pub",
+      "url": "https://explorer.testnet.citizenledger.io",
+      "tx_page": "https://explorer.testnet.citizenledger.io/citizen-testnet-1/tx/${txHash}",
+      "account_page": "https://explorer.testnet.citizenledger.io/citizen-testnet-1/account/${accountAddress}"
+    }
+  ],
+  "images": [
+    {
+      "png": "https://raw.githubusercontent.com/Mopperr/citizen-ledger/main/frontend/public/logo.png",
+      "theme": {
+        "primary_color_hex": "#3B82F6"
+      }
+    }
+  ],
+  "keywords": [
+    "citizen",
+    "governance",
+    "identity",
+    "cosmwasm",
+    "testnet"
+  ]
+}

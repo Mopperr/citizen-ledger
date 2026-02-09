@@ -8,6 +8,7 @@
     "initial_supply",
     "max_supply",
     "phases",
+    "slash_penalty_bps",
     "treasury",
     "treasury_share_bps"
   ],
@@ -41,6 +42,12 @@
       "items": {
         "$ref": "#/definitions/EmissionPhase"
       }
+    },
+    "slash_penalty_bps": {
+      "description": "Slash penalty rate in basis points (e.g. 1000 = 10%). Default 0 = no slashing.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
     },
     "treasury": {
       "description": "Treasury address to receive a portion of emissions",

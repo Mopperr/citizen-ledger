@@ -7,6 +7,8 @@
     "denom",
     "last_distribution_height",
     "max_supply",
+    "slash_penalty_bps",
+    "total_slashed",
     "total_staked",
     "total_stakers",
     "treasury",
@@ -25,6 +27,14 @@
       "minimum": 0.0
     },
     "max_supply": {
+      "$ref": "#/definitions/Uint128"
+    },
+    "slash_penalty_bps": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "total_slashed": {
       "$ref": "#/definitions/Uint128"
     },
     "total_staked": {
