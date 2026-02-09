@@ -53,6 +53,9 @@ class Config:
     # Treasury
     treasury_share_bps: int = 2000  # 20% to treasury
     
+    # Difficulty scaling
+    difficulty_enabled: bool = True  # Supply-ratio difficulty scaling
+    
     # Chain
     block_time_seconds: int = 6
     blocks_per_year: int = 5_256_000  # 365.25 * 24 * 60 * 60 / 6
@@ -111,6 +114,14 @@ class TokenomicsSimulator:
             # Calculate emissions for this interval
             interval_emissions = emission_rate * sample_interval
             
+            # Apply supply-ratio difficulty scaling
+            if self.config.difficulty_enabled and self.config.max_supply > 0:
+                remaining_ratio = (self.config.max_supply - total_supply) / self.config.max_supply
+                difficulty_factor = max(0.0, remaining_ratio)
+                interval_emissions *= difficulty_factor
+            else:
+                difficulty_factor = 1.0
+            
             # Check supply cap
             remaining_capacity = self.config.max_supply - total_supply
             actual_emissions = min(interval_emissions, remaining_capacity)
@@ -128,6 +139,8 @@ class TokenomicsSimulator:
             staked_amount = total_supply * staking_rate
             if staked_amount > 0:
                 annual_staker_rewards = emission_rate * self.config.blocks_per_year * (1 - self.config.treasury_share)
+                if self.config.difficulty_enabled and self.config.max_supply > 0:
+                    annual_staker_rewards *= difficulty_factor
                 staking_apy = (annual_staker_rewards / staked_amount) * 100
             else:
                 staking_apy = 0
@@ -138,6 +151,8 @@ class TokenomicsSimulator:
                 'block': block,
                 'year': year,
                 'emission_rate': emission_rate,
+                'difficulty_factor': difficulty_factor,
+                'effective_emission_rate': emission_rate * difficulty_factor,
                 'total_supply': total_supply,
                 'supply_percent': (total_supply / self.config.max_supply) * 100,
                 'treasury_balance': treasury_balance,

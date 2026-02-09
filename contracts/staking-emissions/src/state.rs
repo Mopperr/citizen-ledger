@@ -2,7 +2,7 @@ use cosmwasm_schema::cw_serde;
 use cosmwasm_std::{Addr, Uint128};
 use cw_storage_plus::{Item, Map};
 
-use crate::msg::EmissionPhase;
+use crate::msg::{DifficultyConfig, EmissionPhase};
 
 pub const ADMIN: Item<Addr> = Item::new("admin");
 pub const DENOM: Item<String> = Item::new("denom");
@@ -32,6 +32,9 @@ pub const TOTAL_SLASHED: Item<Uint128> = Item::new("total_slashed");
 /// Slash event log (auto-incrementing key)
 pub const SLASH_COUNT: Item<u64> = Item::new("slash_count");
 pub const SLASH_EVENTS: Map<u64, SlashEvent> = Map::new("slash_events");
+
+/// Scaling difficulty configuration
+pub const DIFFICULTY_CONFIG: Item<DifficultyConfig> = Item::new("difficulty_cfg");
 
 #[cw_serde]
 pub struct StakerInfo {

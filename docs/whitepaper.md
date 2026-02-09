@@ -305,9 +305,9 @@ This is the same model used by modern Ethereum (post-Merge), Cosmos Hub, Osmosis
 
 ### 9.2 Emission Model — Concrete Numbers
 
-CITIZEN has a **hard cap of 10,000,000,000 tokens (10 billion)**. New tokens are minted per block on a declining schedule:
+CITIZEN has a **hard cap of 10,000,000,000 tokens (10 billion)**. New tokens are minted per block on a declining schedule. The rates below are **base maximums** — actual effective rates are lower due to scaling difficulty (see Section 9.3):
 
-| Phase | Duration | Tokens per Block | Blocks/Year* | Annual Emission | Cumulative |
+| Phase | Duration | Base Tokens per Block | Blocks/Year* | Annual Base Emission | Cumulative |
 |---|---|---|---|---|---|
 | Phase 1 (Growth) | Years 0–2 | 475.6 CITIZEN | 5,256,000 | ~2,500,000,000 | 2,500,000,000 (25%) |
 | Phase 2 (Maturation) | Years 2–5 | 190.2 CITIZEN | 5,256,000 | ~1,000,000,000 | 5,500,000,000 (55%) |
@@ -316,9 +316,69 @@ CITIZEN has a **hard cap of 10,000,000,000 tokens (10 billion)**. New tokens are
 
 *\*Based on ~6-second block time → ~14,400 blocks/day → ~5,256,000 blocks/year.*
 
-Once the 10 billion cap is reached (estimated year ~15), **no new tokens are minted.** The protocol becomes fully fee-sustained.
+Once the 10 billion cap is reached, **no new tokens are minted.** The protocol becomes fully fee-sustained.
 
-### 9.3 Two-Layer Distribution Model
+### 9.3 Scaling Difficulty — Why Earning Gets Harder Over Time
+
+Unlike Proof of Work chains (Bitcoin, old Ethereum) where "difficulty" means harder math puzzles, CITIZEN uses **Proof of Stake** — so difficulty means something different. In our system, three compounding mechanisms make it progressively harder to earn tokens the later you join:
+
+#### Mechanism 1: Supply-Ratio Decay (On-Chain, Automatic)
+
+The staking-emissions smart contract applies an automatic **difficulty multiplier** based on how much of the 10B cap has already been minted:
+
+```
+effective_rate = base_phase_rate × (remaining_supply / max_supply)
+```
+
+This means:
+- When 0% is minted (launch day): you earn **100%** of the phase rate
+- When 25% is minted: you earn **75%** of the phase rate
+- When 50% is minted: you earn **50%** of the phase rate
+- When 85% is minted: you earn only **15%** of the phase rate
+- When 99% is minted: you earn only **1%** of the phase rate
+
+This is encoded directly in the staking-emissions contract and cannot be circumvented. It applies to every block, automatically, without governance intervention.
+
+#### Mechanism 2: Staking Pool Dilution (Natural Market Force)
+
+As more participants stake tokens, each person's share of the fixed emission shrinks. At launch with 100M CITIZEN staked, your 100,000 CITIZEN represents 0.1% of the pool. When 4B is staked at maturity, the same 100,000 CITIZEN is only 0.0025% — a **40× dilution** in your proportional share.
+
+This isn't a protocol rule — it's simple math. More competition = smaller individual slices.
+
+#### Mechanism 3: Phase Step-Downs (Scheduled Halvings)
+
+The four-phase base rate decline (475.6 → 190.2 → 114.2 → 57.1 CITIZEN/block) creates scheduled 60%/40%/50% drops at each transition. Combined with supply-ratio decay, the effective rate at each phase transition is even lower than the base rate suggests.
+
+#### Combined Difficulty Curve — All Three Layers
+
+The table below shows how the effective per-block emission rate drops when you combine phase step-downs with supply-ratio decay:
+
+| Approx. Time | Supply Minted | Phase Base Rate | Difficulty Factor | Effective Rate | vs. Launch |
+|---|---|---|---|---|---|
+| Day 1 | 0% | 475.6 | 1.00 | **475.6** | 1.0× |
+| Year 1 | ~10% | 475.6 | 0.90 | **428.0** | 0.90× |
+| Year 2 | ~25% | 190.2 | 0.75 | **142.7** | 0.30× |
+| Year 4 | ~40% | 190.2 | 0.60 | **114.1** | 0.24× |
+| Year 6 | ~55% | 114.2 | 0.45 | **51.4** | 0.11× |
+| Year 8 | ~70% | 114.2 | 0.30 | **34.3** | 0.07× |
+| Year 12 | ~85% | 57.1 | 0.15 | **8.6** | 0.018× |
+| Year 18 | ~95% | 57.1 | 0.05 | **2.9** | 0.006× |
+| Year 25+ | ~99% | 57.1 | 0.01 | **0.6** | 0.001× |
+| Post-cap | 100% | 0 | — | **0** | Fees only |
+
+**The first staker earns ~800× more per block than someone entering at year 18.** This creates a powerful incentive to participate early — similar to early Bitcoin miners earning 50 BTC per block versus today's 3.125 BTC.
+
+> **Plain English:** Think of it like panning for gold. When you're the first prospector at a fresh river, gold nuggets are everywhere. As more people arrive and the easy gold is found, each pan yields less and less. By the time 95% of the gold is gone, you're sifting through sand for specks. CITIZEN works the same way — the protocol makes each successive token harder to earn, rewarding those who showed up first.
+
+#### Why This Matters
+
+1. **Early Adoption Reward** — The strongest financial incentive to join the network early, when it needs participants most.
+2. **Anti-Whale Protection** — Late-entering whales can't simply buy hash power or stake massive amounts and earn at the same rate as pioneers.
+3. **Extended Network Lifetime** — The asymptotic approach to the cap means emission never abruptly stops; the network transitions smoothly from emission-funded to fee-funded.
+4. **Deflationary Pressure** — As difficulty rises, new supply entering circulation slows dramatically, increasing scarcity.
+5. **Fair and Transparent** — The formula is on-chain, deterministic, and verifiable by anyone. No hidden adjustments.
+
+### 9.4 Two-Layer Distribution Model
 
 Citizen Ledger uses a **two-layer distribution model** rather than a single flat split. Different income types have different splits, reflecting who created the value:
 
@@ -332,7 +392,7 @@ Citizen Ledger uses a **two-layer distribution model** rather than a single flat
 
 **Why two layers?** A hospital that the treasury built and funded should return more to the treasury so it can build the *next* hospital. Meanwhile, block emissions and fees should primarily reward the people securing the network. This creates a compounding flywheel: treasury → builds assets → revenue → 60% back to treasury → builds more assets.
 
-### 9.4 Emission Split (per block)
+### 9.5 Emission Split (per block)
 
 Every block, newly minted tokens are split 75/25:
 
@@ -342,7 +402,7 @@ Every block, newly minted tokens are split 75/25:
 | **Treasury** | 25% | 118.9 CITIZEN | 47.6 CITIZEN |
 | **Total** | 100% | 475.6 CITIZEN | 190.2 CITIZEN |
 
-### 9.5 Staking Mechanics
+### 9.6 Staking Mechanics
 
 Token holders stake CITIZEN to:
 - **Earn block rewards** — Pro-rata share of the 75% staker emission.
@@ -353,7 +413,7 @@ Token holders stake CITIZEN to:
 
 **Unbonding period:** 21 days. When you unstake, tokens are locked for 21 days before they become liquid. This prevents short-term speculation and ensures validators maintain skin in the game.
 
-### 9.6 Staking APY by Phase
+### 9.7 Staking APY by Phase
 
 The Annual Percentage Yield (APY) for stakers depends on total staked supply. These estimates assume **40% of circulating supply is staked** (typical for Cosmos chains):
 
@@ -367,7 +427,7 @@ The Annual Percentage Yield (APY) for stakers depends on total staked supply. Th
 
 *Note: Phase 1 APY is very high to bootstrap the network. Early stakers earn the most, similar to early Bitcoin miners. APY naturally declines as more tokens enter circulation.*
 
-### 9.7 Compound Staking — What $1,000 Becomes
+### 9.8 Compound Staking — What $1,000 Becomes
 
 If you stake and **re-stake all rewards every month** (compounding), here's what a $1,000 initial position grows to across different entry points:
 
@@ -409,7 +469,7 @@ Assumes purchase of 100,000 CITIZEN at market price.
 
 *All scenarios exclude infrastructure yield, governance bonuses, and token price appreciation — actual returns may be higher.*
 
-### 9.8 Governance Participation Bonus
+### 9.9 Governance Participation Bonus
 
 Stakers who also **actively vote on governance proposals** earn a yield multiplier:
 
@@ -423,7 +483,7 @@ Stakers who also **actively vote on governance proposals** earn a yield multipli
 
 *Example: If base staking APY is 17% and you vote on all proposals, your effective APY is 17% × 1.8 = 30.6%.*
 
-### 9.9 Slashing
+### 9.10 Slashing
 
 Validators who violate network rules face slashing penalties:
 
@@ -435,7 +495,7 @@ Validators who violate network rules face slashing penalties:
 
 Slashed tokens are sent to the treasury, not burned — they fund public programs.
 
-### 9.10 Post-Cap Economics — How Fees Work After All Tokens Are Minted
+### 9.11 Post-Cap Economics — How Fees Work After All Tokens Are Minted
 
 Around year ~15, all 10,000,000,000 CITIZEN (10 billion) will have been minted. At that point, **no new tokens are created — ever.** The network must sustain itself entirely through fees and real-world revenue. Here's exactly how that works:
 

@@ -14,6 +14,15 @@ pub struct EmissionPhase {
     pub tokens_per_block: Uint128,
 }
 
+/// Scaling difficulty configuration.
+/// Applies a supply-ratio decay: effective_rate = base_rate × (remaining / max_supply).
+/// This makes earning tokens progressively harder as more tokens are minted.
+#[cw_serde]
+pub struct DifficultyConfig {
+    /// Whether difficulty scaling is enabled
+    pub enabled: bool,
+}
+
 #[cw_serde]
 pub struct InstantiateMsg {
     pub admin: String,
@@ -31,6 +40,8 @@ pub struct InstantiateMsg {
     pub treasury_share_bps: u64,
     /// Slash penalty rate in basis points (e.g. 1000 = 10%). Default 0 = no slashing.
     pub slash_penalty_bps: u64,
+    /// Optional difficulty scaling config. If omitted, defaults to enabled.
+    pub difficulty_config: Option<DifficultyConfig>,
 }
 
 #[cw_serde]
@@ -49,6 +60,8 @@ pub enum ExecuteMsg {
     Slash { staker: String, reason: String },
     /// Update slash penalty rate (admin only)
     UpdateSlashPenalty { slash_penalty_bps: u64 },
+    /// Update difficulty scaling config (admin/governance only)
+    UpdateDifficulty { config: DifficultyConfig },
 }
 
 /// Message for contract migration
@@ -88,6 +101,10 @@ pub enum QueryMsg {
         start_after: Option<u64>,
         limit: Option<u32>,
     },
+
+    /// Get current difficulty scaling info
+    #[returns(DifficultyResponse)]
+    CurrentDifficulty {},
 }
 
 #[cw_serde]
@@ -149,4 +166,18 @@ pub struct SlashEventResponse {
 #[cw_serde]
 pub struct SlashHistoryResponse {
     pub events: Vec<SlashEventResponse>,
+}
+
+#[cw_serde]
+pub struct DifficultyResponse {
+    /// Whether difficulty scaling is enabled
+    pub enabled: bool,
+    /// Current difficulty factor as basis points (10000 = 1.0×, 5000 = 0.5×)
+    pub difficulty_factor_bps: u64,
+    /// Percentage of supply already minted (basis points, e.g. 2500 = 25%)
+    pub supply_minted_bps: u64,
+    /// Current effective tokens per block (after difficulty adjustment)
+    pub effective_tokens_per_block: Uint128,
+    /// Base tokens per block (before difficulty)
+    pub base_tokens_per_block: Uint128,
 }

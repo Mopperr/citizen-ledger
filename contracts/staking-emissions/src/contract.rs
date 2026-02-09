@@ -39,6 +39,12 @@ pub fn instantiate(
     TOTAL_SLASHED.save(deps.storage, &Uint128::zero())?;
     SLASH_COUNT.save(deps.storage, &0u64)?;
 
+    // Initialize difficulty scaling (defaults to enabled if not specified)
+    let difficulty_cfg = msg.difficulty_config.unwrap_or(DifficultyConfig {
+        enabled: true,
+    });
+    DIFFICULTY_CONFIG.save(deps.storage, &difficulty_cfg)?;
+
     Ok(Response::new()
         .add_attribute("action", "instantiate")
         .add_attribute("max_supply", msg.max_supply.to_string())
@@ -63,6 +69,9 @@ pub fn execute(
         ExecuteMsg::Slash { staker, reason } => execute_slash(deps, env, info, staker, reason),
         ExecuteMsg::UpdateSlashPenalty { slash_penalty_bps } => {
             execute_update_slash_penalty(deps, info, slash_penalty_bps)
+        }
+        ExecuteMsg::UpdateDifficulty { config } => {
+            execute_update_difficulty(deps, info, config)
         }
     }
 }
@@ -101,6 +110,17 @@ fn update_global_index(deps: &mut DepsMut, env: &Env) -> Result<Uint128, Contrac
     let blocks = current_height - last_height;
     let rate = get_emission_rate(&phases, current_height);
     let mut raw_emission = rate * Uint128::from(blocks);
+
+    // ── Supply-Ratio Difficulty Scaling ──────────────────────────
+    // effective_emission = raw_emission × (remaining / max_supply)
+    // As more tokens are minted, the difficulty factor drops toward zero,
+    // making each successive token harder to earn.
+    let difficulty_cfg = DIFFICULTY_CONFIG.may_load(deps.storage)?.unwrap_or(DifficultyConfig {
+        enabled: true,
+    });
+    if difficulty_cfg.enabled && !max_supply.is_zero() {
+        raw_emission = raw_emission.multiply_ratio(remaining, max_supply);
+    }
 
     // Cap at remaining supply
     if raw_emission > remaining {
@@ -474,6 +494,23 @@ fn execute_update_slash_penalty(
         .add_attribute("slash_penalty_bps", slash_penalty_bps.to_string()))
 }
 
+fn execute_update_difficulty(
+    deps: DepsMut,
+    info: MessageInfo,
+    config: DifficultyConfig,
+) -> Result<Response, ContractError> {
+    let admin = ADMIN.load(deps.storage)?;
+    if info.sender != admin {
+        return Err(ContractError::Unauthorized {
+            reason: "Only admin/governance can update difficulty config".to_string(),
+        });
+    }
+    DIFFICULTY_CONFIG.save(deps.storage, &config)?;
+    Ok(Response::new()
+        .add_attribute("action", "update_difficulty")
+        .add_attribute("enabled", config.enabled.to_string()))
+}
+
 // ── Query ───────────────────────────────────────────────────────────
 
 #[entry_point]
@@ -488,6 +525,7 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         QueryMsg::SlashHistory { start_after, limit } => {
             to_json_binary(&query_slash_history(deps, start_after, limit)?)
         }
+        QueryMsg::CurrentDifficulty {} => to_json_binary(&query_difficulty(deps, env)?),
     }
 }
 
@@ -599,6 +637,50 @@ fn query_config(deps: Deps) -> StdResult<StakingConfigResponse> {
     })
 }
 
+fn query_difficulty(deps: Deps, env: Env) -> StdResult<DifficultyResponse> {
+    let max_supply = MAX_SUPPLY.load(deps.storage)?;
+    let total_minted = TOTAL_MINTED.load(deps.storage)?;
+    let remaining = max_supply.saturating_sub(total_minted);
+    let difficulty_cfg = DIFFICULTY_CONFIG.may_load(deps.storage)?.unwrap_or(DifficultyConfig {
+        enabled: true,
+    });
+
+    // Calculate difficulty factor in basis points (10000 = 1.0×)
+    let difficulty_factor_bps = if max_supply.is_zero() {
+        0u64
+    } else {
+        remaining
+            .multiply_ratio(10_000u128, max_supply)
+            .u128() as u64
+    };
+
+    // Calculate supply minted percentage in basis points
+    let supply_minted_bps = if max_supply.is_zero() {
+        10_000u64
+    } else {
+        total_minted
+            .multiply_ratio(10_000u128, max_supply)
+            .u128() as u64
+    };
+
+    // Get base rate and compute effective rate
+    let phases = PHASES.load(deps.storage)?;
+    let base_rate = get_emission_rate(&phases, env.block.height);
+    let effective_rate = if difficulty_cfg.enabled && !max_supply.is_zero() {
+        base_rate.multiply_ratio(remaining, max_supply)
+    } else {
+        base_rate
+    };
+
+    Ok(DifficultyResponse {
+        enabled: difficulty_cfg.enabled,
+        difficulty_factor_bps,
+        supply_minted_bps,
+        effective_tokens_per_block: effective_rate,
+        base_tokens_per_block: base_rate,
+    })
+}
+
 fn query_slash_history(
     deps: Deps,
     start_after: Option<u64>,
@@ -676,6 +758,41 @@ mod tests {
             treasury: treasury_addr.to_string(),
             treasury_share_bps: 2000, // 20% to treasury
             slash_penalty_bps: 1000,  // 10% slash
+            difficulty_config: Some(DifficultyConfig { enabled: true }),
+        };
+        let info = message_info(&creator_addr, &[]);
+        instantiate(deps, mock_env(), info, msg).unwrap();
+    }
+
+    /// Setup helper with difficulty DISABLED for backward-compatible tests
+    fn setup_no_difficulty(deps: DepsMut) {
+        let api = MockApi::default();
+        let admin_addr = api.addr_make("admin");
+        let treasury_addr = api.addr_make("treasury");
+        let creator_addr = api.addr_make("creator");
+        let msg = InstantiateMsg {
+            admin: admin_addr.to_string(),
+            max_supply: Uint128::new(1_000_000_000_000),
+            initial_supply: Uint128::new(100_000_000_000),
+            denom: "ucitizen".to_string(),
+            phases: vec![
+                EmissionPhase {
+                    label: "Year 1".to_string(),
+                    start_block: 0,
+                    end_block: 5_256_000,
+                    tokens_per_block: Uint128::new(100_000),
+                },
+                EmissionPhase {
+                    label: "Year 2-3".to_string(),
+                    start_block: 5_256_001,
+                    end_block: 15_768_000,
+                    tokens_per_block: Uint128::new(50_000),
+                },
+            ],
+            treasury: treasury_addr.to_string(),
+            treasury_share_bps: 2000,
+            slash_penalty_bps: 1000,
+            difficulty_config: Some(DifficultyConfig { enabled: false }),
         };
         let info = message_info(&creator_addr, &[]);
         instantiate(deps, mock_env(), info, msg).unwrap();
@@ -762,7 +879,7 @@ mod tests {
     #[test]
     fn test_non_admin_cannot_slash() {
         let mut deps = mock_dependencies();
-        setup(deps.as_mut());
+        setup_no_difficulty(deps.as_mut());
 
         let staker1_addr = deps.api.addr_make("staker1");
         let info = message_info(&staker1_addr, &coins(1_000_000, "ucitizen"));
@@ -782,5 +899,69 @@ mod tests {
         )
         .unwrap_err();
         assert!(matches!(err, ContractError::Unauthorized { .. }));
+    }
+
+    #[test]
+    fn test_difficulty_scaling_reduces_emissions() {
+        let mut deps = mock_dependencies();
+        setup(deps.as_mut()); // difficulty enabled
+
+        // Initial supply: 100B out of 1T = 10% minted → difficulty factor = 0.90
+        let difficulty = query_difficulty(deps.as_ref(), mock_env()).unwrap();
+        assert!(difficulty.enabled);
+        assert_eq!(difficulty.supply_minted_bps, 1000); // 10%
+        assert_eq!(difficulty.difficulty_factor_bps, 9000); // 90%
+
+        // Effective rate should be 90% of base (100_000 × 0.9 = 90_000)
+        assert_eq!(difficulty.base_tokens_per_block, Uint128::new(100_000));
+        assert_eq!(difficulty.effective_tokens_per_block, Uint128::new(90_000));
+    }
+
+    #[test]
+    fn test_difficulty_disabled_gives_full_rate() {
+        let mut deps = mock_dependencies();
+        setup_no_difficulty(deps.as_mut());
+
+        let difficulty = query_difficulty(deps.as_ref(), mock_env()).unwrap();
+        assert!(!difficulty.enabled);
+        // Even though 10% is minted, effective = base when disabled
+        assert_eq!(difficulty.effective_tokens_per_block, Uint128::new(100_000));
+        assert_eq!(difficulty.base_tokens_per_block, Uint128::new(100_000));
+    }
+
+    #[test]
+    fn test_update_difficulty_admin_only() {
+        let mut deps = mock_dependencies();
+        setup(deps.as_mut());
+
+        // Non-admin cannot update
+        let rando_addr = deps.api.addr_make("rando");
+        let rando_info = message_info(&rando_addr, &[]);
+        let err = execute(
+            deps.as_mut(),
+            mock_env(),
+            rando_info,
+            ExecuteMsg::UpdateDifficulty {
+                config: DifficultyConfig { enabled: false },
+            },
+        )
+        .unwrap_err();
+        assert!(matches!(err, ContractError::Unauthorized { .. }));
+
+        // Admin can update
+        let admin_addr = deps.api.addr_make("admin");
+        let admin_info = message_info(&admin_addr, &[]);
+        execute(
+            deps.as_mut(),
+            mock_env(),
+            admin_info,
+            ExecuteMsg::UpdateDifficulty {
+                config: DifficultyConfig { enabled: false },
+            },
+        )
+        .unwrap();
+
+        let difficulty = query_difficulty(deps.as_ref(), mock_env()).unwrap();
+        assert!(!difficulty.enabled);
     }
 }
