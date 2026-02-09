@@ -1,6 +1,6 @@
+use citizen_common::treasury::FundCategory;
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Uint128;
-use citizen_common::treasury::FundCategory;
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -29,13 +29,9 @@ pub enum ExecuteMsg {
         allocations: Vec<(FundCategory, u64)>,
     },
     /// Update governance contract address (admin only)
-    UpdateGovernance {
-        governance_contract: String,
-    },
+    UpdateGovernance { governance_contract: String },
     /// Transfer admin
-    TransferAdmin {
-        new_admin: String,
-    },
+    TransferAdmin { new_admin: String },
 }
 
 #[cw_serde]

@@ -1,6 +1,6 @@
+use citizen_common::governance::{VoteOption, VotingMethod};
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Uint128;
-use citizen_common::governance::{VoteOption, VotingMethod};
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -37,17 +37,11 @@ pub enum ExecuteMsg {
         tokens: Option<Uint128>,
     },
     /// Tally and finalize a proposal after voting ends
-    TallyProposal {
-        proposal_id: u64,
-    },
+    TallyProposal { proposal_id: u64 },
     /// Execute a passed proposal
-    ExecuteProposal {
-        proposal_id: u64,
-    },
+    ExecuteProposal { proposal_id: u64 },
     /// Cancel a proposal (proposer or admin only)
-    CancelProposal {
-        proposal_id: u64,
-    },
+    CancelProposal { proposal_id: u64 },
     /// Update config (admin only)
     UpdateConfig {
         voting_period: Option<u64>,

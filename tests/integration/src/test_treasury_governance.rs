@@ -5,9 +5,9 @@
 #[cfg(test)]
 mod tests {
     use crate::helpers::*;
+    use citizen_common::treasury::FundCategory;
     use cosmwasm_std::Uint128;
     use cw_multi_test::Executor;
-    use citizen_common::treasury::FundCategory;
 
     #[test]
     fn treasury_deposit_and_query_balance() {
@@ -47,7 +47,10 @@ mod tests {
             &[],
         );
 
-        assert!(res.is_err(), "Admin should not be able to spend directly — governance required");
+        assert!(
+            res.is_err(),
+            "Admin should not be able to spend directly — governance required"
+        );
     }
 
     #[test]
@@ -68,15 +71,15 @@ mod tests {
             &[],
         );
 
-        assert!(res.is_ok(), "Governance (voting) should authorize treasury spends");
+        assert!(
+            res.is_ok(),
+            "Governance (voting) should authorize treasury spends"
+        );
 
         // Check spend was recorded
         let config: treasury::msg::TreasuryConfigResponse = app
             .wrap()
-            .query_wasm_smart(
-                system.treasury.clone(),
-                &treasury::msg::QueryMsg::Config {},
-            )
+            .query_wasm_smart(system.treasury.clone(), &treasury::msg::QueryMsg::Config {})
             .unwrap();
         assert_eq!(config.total_spent, Uint128::new(500_000));
 
@@ -86,7 +89,10 @@ mod tests {
             .query_balance(system.citizen1.clone(), "ucitizen")
             .unwrap();
         // 10B initial + 500K from treasury
-        assert_eq!(citizen_balance.amount, Uint128::new(10_000_000_000 + 500_000));
+        assert_eq!(
+            citizen_balance.amount,
+            Uint128::new(10_000_000_000 + 500_000)
+        );
     }
 
     #[test]

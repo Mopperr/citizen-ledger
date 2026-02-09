@@ -5,9 +5,9 @@
 #[cfg(test)]
 mod tests {
     use crate::helpers::*;
+    use citizen_common::treasury::FundCategory;
     use cosmwasm_std::Uint128;
     use cw_multi_test::Executor;
-    use citizen_common::treasury::FundCategory;
 
     #[test]
     fn grant_apply_and_governance_approve() {
@@ -188,7 +188,10 @@ mod tests {
                 &grants::msg::QueryMsg::GetGrant { grant_id: 1 },
             )
             .unwrap();
-        assert_eq!(grant.milestones[0].evidence, Some("Receipt for equipment: ipfs://Qm123...".to_string()));
+        assert_eq!(
+            grant.milestones[0].evidence,
+            Some("Receipt for equipment: ipfs://Qm123...".to_string())
+        );
     }
 
     #[test]
@@ -234,7 +237,10 @@ mod tests {
             },
             &[],
         );
-        assert!(res.is_err(), "Non-grantee should not submit milestone evidence");
+        assert!(
+            res.is_err(),
+            "Non-grantee should not submit milestone evidence"
+        );
     }
 
     #[test]

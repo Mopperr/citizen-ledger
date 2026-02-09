@@ -5,9 +5,9 @@
 #[cfg(test)]
 mod tests {
     use crate::helpers::*;
+    use citizen_common::governance::{VoteOption, VotingMethod};
     use cosmwasm_std::Uint128;
     use cw_multi_test::Executor;
-    use citizen_common::governance::{VoteOption, VotingMethod};
 
     #[test]
     fn citizen_with_credential_can_create_proposal() {

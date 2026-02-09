@@ -1,6 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Integration Test Helpers – sets up cw-multi-test App with all contracts
 // ─────────────────────────────────────────────────────────────────────────────
+#![allow(dead_code)]
 
 use cosmwasm_std::{Addr, Coin, Uint128};
 use cw_multi_test::{App, AppBuilder, ContractWrapper, Executor};
@@ -9,14 +10,16 @@ use citizen_common::treasury::FundCategory;
 
 // ── Contract wrappers ───────────────────────────────────────────────────────
 
-pub fn credential_registry_contract() -> Box<ContractWrapper<
-    credential_registry::msg::ExecuteMsg,
-    credential_registry::msg::InstantiateMsg,
-    credential_registry::msg::QueryMsg,
-    citizen_common::errors::ContractError,
-    citizen_common::errors::ContractError,
-    cosmwasm_std::StdError,
->> {
+pub fn credential_registry_contract() -> Box<
+    ContractWrapper<
+        credential_registry::msg::ExecuteMsg,
+        credential_registry::msg::InstantiateMsg,
+        credential_registry::msg::QueryMsg,
+        citizen_common::errors::ContractError,
+        citizen_common::errors::ContractError,
+        cosmwasm_std::StdError,
+    >,
+> {
     let contract = ContractWrapper::new(
         credential_registry::contract::execute,
         credential_registry::contract::instantiate,
@@ -25,14 +28,16 @@ pub fn credential_registry_contract() -> Box<ContractWrapper<
     Box::new(contract)
 }
 
-pub fn treasury_contract() -> Box<ContractWrapper<
-    treasury::msg::ExecuteMsg,
-    treasury::msg::InstantiateMsg,
-    treasury::msg::QueryMsg,
-    citizen_common::errors::ContractError,
-    citizen_common::errors::ContractError,
-    cosmwasm_std::StdError,
->> {
+pub fn treasury_contract() -> Box<
+    ContractWrapper<
+        treasury::msg::ExecuteMsg,
+        treasury::msg::InstantiateMsg,
+        treasury::msg::QueryMsg,
+        citizen_common::errors::ContractError,
+        citizen_common::errors::ContractError,
+        cosmwasm_std::StdError,
+    >,
+> {
     let contract = ContractWrapper::new(
         treasury::contract::execute,
         treasury::contract::instantiate,
@@ -41,14 +46,16 @@ pub fn treasury_contract() -> Box<ContractWrapper<
     Box::new(contract)
 }
 
-pub fn voting_contract() -> Box<ContractWrapper<
-    voting::msg::ExecuteMsg,
-    voting::msg::InstantiateMsg,
-    voting::msg::QueryMsg,
-    citizen_common::errors::ContractError,
-    citizen_common::errors::ContractError,
-    cosmwasm_std::StdError,
->> {
+pub fn voting_contract() -> Box<
+    ContractWrapper<
+        voting::msg::ExecuteMsg,
+        voting::msg::InstantiateMsg,
+        voting::msg::QueryMsg,
+        citizen_common::errors::ContractError,
+        citizen_common::errors::ContractError,
+        cosmwasm_std::StdError,
+    >,
+> {
     let contract = ContractWrapper::new(
         voting::contract::execute,
         voting::contract::instantiate,
@@ -57,14 +64,16 @@ pub fn voting_contract() -> Box<ContractWrapper<
     Box::new(contract)
 }
 
-pub fn grants_contract() -> Box<ContractWrapper<
-    grants::msg::ExecuteMsg,
-    grants::msg::InstantiateMsg,
-    grants::msg::QueryMsg,
-    citizen_common::errors::ContractError,
-    citizen_common::errors::ContractError,
-    cosmwasm_std::StdError,
->> {
+pub fn grants_contract() -> Box<
+    ContractWrapper<
+        grants::msg::ExecuteMsg,
+        grants::msg::InstantiateMsg,
+        grants::msg::QueryMsg,
+        citizen_common::errors::ContractError,
+        citizen_common::errors::ContractError,
+        cosmwasm_std::StdError,
+    >,
+> {
     let contract = ContractWrapper::new(
         grants::contract::execute,
         grants::contract::instantiate,
@@ -73,14 +82,16 @@ pub fn grants_contract() -> Box<ContractWrapper<
     Box::new(contract)
 }
 
-pub fn staking_contract() -> Box<ContractWrapper<
-    staking_emissions::msg::ExecuteMsg,
-    staking_emissions::msg::InstantiateMsg,
-    staking_emissions::msg::QueryMsg,
-    citizen_common::errors::ContractError,
-    citizen_common::errors::ContractError,
-    cosmwasm_std::StdError,
->> {
+pub fn staking_contract() -> Box<
+    ContractWrapper<
+        staking_emissions::msg::ExecuteMsg,
+        staking_emissions::msg::InstantiateMsg,
+        staking_emissions::msg::QueryMsg,
+        citizen_common::errors::ContractError,
+        citizen_common::errors::ContractError,
+        cosmwasm_std::StdError,
+    >,
+> {
     let contract = ContractWrapper::new(
         staking_emissions::contract::execute,
         staking_emissions::contract::instantiate,
@@ -281,11 +292,7 @@ pub fn deploy_full_system() -> (App, DeployedSystem) {
 }
 
 /// Issue a citizenship credential to a holder via the admin issuer
-pub fn issue_citizenship(
-    app: &mut App,
-    system: &DeployedSystem,
-    holder: &Addr,
-) -> String {
+pub fn issue_citizenship(app: &mut App, system: &DeployedSystem, holder: &Addr) -> String {
     let res = app
         .execute_contract(
             system.admin.clone(),

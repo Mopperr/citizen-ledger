@@ -25,8 +25,14 @@ pub fn instantiate(
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
     ADMIN.save(deps.storage, &deps.api.addr_validate(&msg.admin)?)?;
-    GOVERNANCE.save(deps.storage, &deps.api.addr_validate(&msg.governance_contract)?)?;
-    TREASURY.save(deps.storage, &deps.api.addr_validate(&msg.treasury_contract)?)?;
+    GOVERNANCE.save(
+        deps.storage,
+        &deps.api.addr_validate(&msg.governance_contract)?,
+    )?;
+    TREASURY.save(
+        deps.storage,
+        &deps.api.addr_validate(&msg.treasury_contract)?,
+    )?;
     GRANT_COUNT.save(deps.storage, &0u64)?;
     TOTAL_DISBURSED.save(deps.storage, &Uint128::zero())?;
     CYCLE_COUNT.save(deps.storage, &0u64)?;
@@ -72,14 +78,31 @@ pub fn execute(
             description,
             funding_pool,
             max_grant_size,
-        } => execute_register_research_category(deps, info, name, description, funding_pool, max_grant_size),
+        } => execute_register_research_category(
+            deps,
+            info,
+            name,
+            description,
+            funding_pool,
+            max_grant_size,
+        ),
         ExecuteMsg::OpenResearchCycle {
             title,
             categories,
             total_budget,
             duration_blocks,
-        } => execute_open_research_cycle(deps, env, info, title, categories, total_budget, duration_blocks),
-        ExecuteMsg::CloseResearchCycle { cycle_id } => execute_close_research_cycle(deps, info, cycle_id),
+        } => execute_open_research_cycle(
+            deps,
+            env,
+            info,
+            title,
+            categories,
+            total_budget,
+            duration_blocks,
+        ),
+        ExecuteMsg::CloseResearchCycle { cycle_id } => {
+            execute_close_research_cycle(deps, info, cycle_id)
+        }
     }
 }
 
@@ -217,10 +240,13 @@ fn execute_approve_milestone(
 ) -> Result<Response, ContractError> {
     let gov = GOVERNANCE.load(deps.storage)?;
     let admin = ADMIN.load(deps.storage)?;
-    let is_reviewer = REVIEWERS.may_load(deps.storage, &info.sender)?.unwrap_or(false);
+    let is_reviewer = REVIEWERS
+        .may_load(deps.storage, &info.sender)?
+        .unwrap_or(false);
     if info.sender != gov && info.sender != admin && !is_reviewer {
         return Err(ContractError::Unauthorized {
-            reason: "Only governance, admin, or authorized reviewer can approve milestones".to_string(),
+            reason: "Only governance, admin, or authorized reviewer can approve milestones"
+                .to_string(),
         });
     }
 
@@ -435,7 +461,10 @@ fn execute_open_research_cycle(
 
     // Verify all categories exist
     for cat_name in &categories {
-        if RESEARCH_CATEGORIES.may_load(deps.storage, cat_name)?.is_none() {
+        if RESEARCH_CATEGORIES
+            .may_load(deps.storage, cat_name)?
+            .is_none()
+        {
             return Err(ContractError::Unauthorized {
                 reason: format!("Research category '{}' not registered", cat_name),
             });
@@ -479,11 +508,12 @@ fn execute_close_research_cycle(
         });
     }
 
-    let mut cycle = RESEARCH_CYCLES
-        .may_load(deps.storage, cycle_id)?
-        .ok_or(ContractError::Unauthorized {
-            reason: format!("Research cycle {} not found", cycle_id),
-        })?;
+    let mut cycle =
+        RESEARCH_CYCLES
+            .may_load(deps.storage, cycle_id)?
+            .ok_or(ContractError::Unauthorized {
+                reason: format!("Research cycle {} not found", cycle_id),
+            })?;
 
     cycle.status = CycleStatus::Closed;
     RESEARCH_CYCLES.save(deps.storage, cycle_id, &cycle)?;
@@ -647,7 +677,7 @@ fn query_research_cycles(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, message_info, MockApi};
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env, MockApi};
 
     fn setup(deps: DepsMut) {
         let api = MockApi::default();

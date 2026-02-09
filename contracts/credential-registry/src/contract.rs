@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult,
-    Order,
+    entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
+    StdResult,
 };
 use cw2::set_contract_version;
 use sha2::{Digest, Sha256};
@@ -56,7 +56,15 @@ pub fn execute(
             credential_type,
             commitment,
             expires_at,
-        } => execute_issue(deps, env, info, holder, credential_type, commitment, expires_at),
+        } => execute_issue(
+            deps,
+            env,
+            info,
+            holder,
+            credential_type,
+            commitment,
+            expires_at,
+        ),
         ExecuteMsg::VerifyCredential {
             credential_id,
             proof,
@@ -75,7 +83,14 @@ pub fn execute(
             commitment,
             approved,
         } => execute_submit_verification(
-            deps, env, info, request_id, applicant, credential_type, commitment, approved,
+            deps,
+            env,
+            info,
+            request_id,
+            applicant,
+            credential_type,
+            commitment,
+            approved,
         ),
         ExecuteMsg::RequestKeyRecovery {
             old_address,
@@ -156,11 +171,11 @@ fn execute_verify(
     credential_id: String,
     proof: ZkProof,
 ) -> Result<Response, ContractError> {
-    let cred = CREDENTIALS
-        .may_load(deps.storage, &credential_id)?
-        .ok_or(ContractError::CredentialNotFound {
+    let cred = CREDENTIALS.may_load(deps.storage, &credential_id)?.ok_or(
+        ContractError::CredentialNotFound {
             id: credential_id.clone(),
-        })?;
+        },
+    )?;
 
     if cred.revoked {
         return Err(ContractError::CredentialRevoked);
@@ -200,11 +215,11 @@ fn execute_revoke(
     credential_id: String,
     reason: String,
 ) -> Result<Response, ContractError> {
-    let mut cred = CREDENTIALS
-        .may_load(deps.storage, &credential_id)?
-        .ok_or(ContractError::CredentialNotFound {
+    let mut cred = CREDENTIALS.may_load(deps.storage, &credential_id)?.ok_or(
+        ContractError::CredentialNotFound {
             id: credential_id.clone(),
-        })?;
+        },
+    )?;
 
     // Only the original issuer or admin can revoke
     let admin = ADMIN.load(deps.storage)?;
@@ -373,8 +388,10 @@ fn query_list(
         .take(limit)
         .filter_map(|r| r.ok())
         .filter_map(|(cred_id, _)| {
-            CREDENTIALS.load(deps.storage, &cred_id).ok().map(|c| {
-                CredentialResponse {
+            CREDENTIALS
+                .load(deps.storage, &cred_id)
+                .ok()
+                .map(|c| CredentialResponse {
                     id: c.id,
                     holder: c.holder.to_string(),
                     credential_type: c.credential_type,
@@ -383,8 +400,7 @@ fn query_list(
                     issued_at: c.issued_at,
                     expires_at: c.expires_at,
                     revoked: c.revoked,
-                }
-            })
+                })
         })
         .collect();
 
@@ -457,7 +473,12 @@ fn execute_submit_verification(
     let count = CREDENTIAL_COUNT.load(deps.storage)?;
     let new_count = count + 1;
 
-    let cred_id_raw = format!("{}:{}:{}", applicant, credential_type, env.block.time.seconds());
+    let cred_id_raw = format!(
+        "{}:{}:{}",
+        applicant,
+        credential_type,
+        env.block.time.seconds()
+    );
     let mut hasher = Sha256::new();
     hasher.update(cred_id_raw.as_bytes());
     let cred_id = hex::encode(hasher.finalize());
@@ -496,7 +517,10 @@ fn execute_request_recovery(
     let old_addr = deps.api.addr_validate(&old_address)?;
     let timelock = RECOVERY_TIMELOCK.load(deps.storage)?;
 
-    let recovery_id_raw = format!("recovery:{}:{}:{}", old_address, info.sender, env.block.height);
+    let recovery_id_raw = format!(
+        "recovery:{}:{}:{}",
+        old_address, info.sender, env.block.height
+    );
     let mut hasher = Sha256::new();
     hasher.update(recovery_id_raw.as_bytes());
     let recovery_id = hex::encode(hasher.finalize());
@@ -527,11 +551,12 @@ fn execute_execute_recovery(
     _info: MessageInfo,
     recovery_id: String,
 ) -> Result<Response, ContractError> {
-    let mut recovery = RECOVERIES
-        .may_load(deps.storage, &recovery_id)?
-        .ok_or(ContractError::Unauthorized {
-            reason: "Recovery not found".to_string(),
-        })?;
+    let mut recovery =
+        RECOVERIES
+            .may_load(deps.storage, &recovery_id)?
+            .ok_or(ContractError::Unauthorized {
+                reason: "Recovery not found".to_string(),
+            })?;
 
     if !matches!(recovery.status, StoredRecoveryStatus::TimelockWaiting) {
         return Err(ContractError::Unauthorized {
@@ -578,11 +603,12 @@ fn execute_contest_recovery(
     info: MessageInfo,
     recovery_id: String,
 ) -> Result<Response, ContractError> {
-    let mut recovery = RECOVERIES
-        .may_load(deps.storage, &recovery_id)?
-        .ok_or(ContractError::Unauthorized {
-            reason: "Recovery not found".to_string(),
-        })?;
+    let mut recovery =
+        RECOVERIES
+            .may_load(deps.storage, &recovery_id)?
+            .ok_or(ContractError::Unauthorized {
+                reason: "Recovery not found".to_string(),
+            })?;
 
     // Only the old address can contest
     if info.sender != recovery.old_address {
@@ -610,7 +636,7 @@ fn execute_contest_recovery(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, message_info, MockApi};
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env, MockApi};
 
     fn setup_contract(deps: DepsMut) {
         let api = MockApi::default();
@@ -691,7 +717,9 @@ mod tests {
             expires_at: 0,
         };
         let res = execute(deps.as_mut(), mock_env(), info.clone(), msg).unwrap();
-        let cred_id = res.attributes.iter()
+        let cred_id = res
+            .attributes
+            .iter()
             .find(|a| a.key == "credential_id")
             .unwrap()
             .value

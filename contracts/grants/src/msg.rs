@@ -1,6 +1,6 @@
+use citizen_common::treasury::FundCategory;
 use cosmwasm_schema::{cw_serde, QueryResponses};
 use cosmwasm_std::Uint128;
-use citizen_common::treasury::FundCategory;
 
 #[cw_serde]
 pub struct MilestoneInput {
@@ -27,10 +27,7 @@ pub enum ExecuteMsg {
         milestones: Vec<MilestoneInput>,
     },
     /// Approve a grant (governance only, after proposal passes)
-    Approve {
-        grant_id: u64,
-        proposal_id: u64,
-    },
+    Approve { grant_id: u64, proposal_id: u64 },
     /// Submit evidence for a milestone completion
     SubmitMilestone {
         grant_id: u64,
@@ -38,27 +35,15 @@ pub enum ExecuteMsg {
         evidence: String,
     },
     /// Approve milestone and release funds (governance or reviewer)
-    ApproveMilestone {
-        grant_id: u64,
-        milestone_id: u32,
-    },
+    ApproveMilestone { grant_id: u64, milestone_id: u32 },
     /// Reject a grant application (governance only)
-    Reject {
-        grant_id: u64,
-        reason: String,
-    },
+    Reject { grant_id: u64, reason: String },
     /// Cancel an active grant (admin or grantee)
-    Cancel {
-        grant_id: u64,
-    },
+    Cancel { grant_id: u64 },
     /// Add a reviewer to the review committee (admin/governance only)
-    AddReviewer {
-        reviewer: String,
-    },
+    AddReviewer { reviewer: String },
     /// Remove a reviewer from the review committee (admin/governance only)
-    RemoveReviewer {
-        reviewer: String,
-    },
+    RemoveReviewer { reviewer: String },
     /// Register a new research category (admin/governance)
     RegisterResearchCategory {
         name: String,
@@ -74,9 +59,7 @@ pub enum ExecuteMsg {
         duration_blocks: u64,
     },
     /// Close a research cycle and finalize allocations
-    CloseResearchCycle {
-        cycle_id: u64,
-    },
+    CloseResearchCycle { cycle_id: u64 },
 }
 
 #[cw_serde]

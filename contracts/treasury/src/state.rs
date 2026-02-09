@@ -1,6 +1,6 @@
+use citizen_common::treasury::FundCategory;
 use cosmwasm_std::{Addr, Uint128};
 use cw_storage_plus::{Item, Map};
-use citizen_common::treasury::FundCategory;
 
 pub const ADMIN: Item<Addr> = Item::new("admin");
 pub const GOVERNANCE: Item<Addr> = Item::new("governance");

@@ -25,8 +25,14 @@ pub fn instantiate(
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
 
     ADMIN.save(deps.storage, &deps.api.addr_validate(&msg.admin)?)?;
-    CREDENTIAL_REGISTRY.save(deps.storage, &deps.api.addr_validate(&msg.credential_registry)?)?;
-    TREASURY.save(deps.storage, &deps.api.addr_validate(&msg.treasury_contract)?)?;
+    CREDENTIAL_REGISTRY.save(
+        deps.storage,
+        &deps.api.addr_validate(&msg.credential_registry)?,
+    )?;
+    TREASURY.save(
+        deps.storage,
+        &deps.api.addr_validate(&msg.treasury_contract)?,
+    )?;
     VOTING_PERIOD.save(deps.storage, &msg.voting_period)?;
     QUORUM_BPS.save(deps.storage, &msg.quorum_bps)?;
     THRESHOLD_BPS.save(deps.storage, &msg.threshold_bps)?;
@@ -53,27 +59,38 @@ pub fn execute(
             description,
             voting_method,
             voting_period,
-        } => execute_create_proposal(deps, env, info, title, description, voting_method, voting_period),
+        } => execute_create_proposal(
+            deps,
+            env,
+            info,
+            title,
+            description,
+            voting_method,
+            voting_period,
+        ),
         ExecuteMsg::CastVote {
             proposal_id,
             vote,
             tokens,
         } => execute_cast_vote(deps, env, info, proposal_id, vote, tokens),
-        ExecuteMsg::TallyProposal { proposal_id } => {
-            execute_tally(deps, env, info, proposal_id)
-        }
+        ExecuteMsg::TallyProposal { proposal_id } => execute_tally(deps, env, info, proposal_id),
         ExecuteMsg::ExecuteProposal { proposal_id } => {
             execute_execute_proposal(deps, env, info, proposal_id)
         }
-        ExecuteMsg::CancelProposal { proposal_id } => {
-            execute_cancel(deps, env, info, proposal_id)
-        }
+        ExecuteMsg::CancelProposal { proposal_id } => execute_cancel(deps, env, info, proposal_id),
         ExecuteMsg::UpdateConfig {
             voting_period,
             quorum_bps,
             threshold_bps,
             timelock_period,
-        } => execute_update_config(deps, info, voting_period, quorum_bps, threshold_bps, timelock_period),
+        } => execute_update_config(
+            deps,
+            info,
+            voting_period,
+            quorum_bps,
+            threshold_bps,
+            timelock_period,
+        ),
     }
 }
 
@@ -89,16 +106,18 @@ fn check_credential(deps: &DepsMut, voter: &str) -> Result<bool, ContractError> 
         }
     });
 
-    let result: StdResult<serde_json::Value> = deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
-        contract_addr: registry.to_string(),
-        msg: to_json_binary(&query_msg)?,
-    }));
+    let result: StdResult<serde_json::Value> =
+        deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
+            contract_addr: registry.to_string(),
+            msg: to_json_binary(&query_msg)?,
+        }));
 
     match result {
         // In unit tests without real contracts, we accept all voters
         Err(_) => Ok(true),
         Ok(val) => {
-            let has = val.get("has_credential")
+            let has = val
+                .get("has_credential")
                 .and_then(|v| v.as_bool())
                 .unwrap_or(false);
             Ok(has)
@@ -395,7 +414,12 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
             start_after,
             limit,
             status_filter,
-        } => to_json_binary(&query_list_proposals(deps, start_after, limit, status_filter)?),
+        } => to_json_binary(&query_list_proposals(
+            deps,
+            start_after,
+            limit,
+            status_filter,
+        )?),
         QueryMsg::GetVote { proposal_id, voter } => {
             to_json_binary(&query_vote(deps, proposal_id, voter)?)
         }
@@ -504,7 +528,7 @@ fn to_proposal_response(p: StoredProposal) -> ProposalResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, message_info, MockApi};
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env, MockApi};
 
     fn setup(deps: DepsMut) {
         let api = MockApi::default();
@@ -662,7 +686,13 @@ mod tests {
 
         let anyone_addr = deps.api.addr_make("anyone");
         let tally_info = message_info(&anyone_addr, &[]);
-        execute(deps.as_mut(), env.clone(), tally_info, ExecuteMsg::TallyProposal { proposal_id: 1 }).unwrap();
+        execute(
+            deps.as_mut(),
+            env.clone(),
+            tally_info,
+            ExecuteMsg::TallyProposal { proposal_id: 1 },
+        )
+        .unwrap();
 
         let p = query_proposal(deps.as_ref(), 1).unwrap();
         // With timelock_period=50 the proposal is Timelocked, not Passed

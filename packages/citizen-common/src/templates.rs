@@ -1,6 +1,6 @@
+use crate::governance::VotingMethod;
 use cosmwasm_schema::cw_serde;
 use cosmwasm_std::Uint128;
-use crate::governance::VotingMethod;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Governance Proposal Templates – pre-built proposal types for common actions
@@ -42,14 +42,9 @@ pub enum ProposalTemplate {
         rationale: String,
     },
     /// Emergency action (shorter timelock, higher quorum requirement)
-    Emergency {
-        action: String,
-        description: String,
-    },
+    Emergency { action: String, description: String },
     /// Free-form text proposal (signalling / discussion)
-    TextProposal {
-        summary: String,
-    },
+    TextProposal { summary: String },
 }
 
 /// Governance parameters that can be changed via proposal.
@@ -97,20 +92,44 @@ impl ProposalTemplate {
     /// Auto-generate a proposal title from template fields.
     pub fn auto_title(&self) -> String {
         match self {
-            ProposalTemplate::TreasurySpend { recipient, amount, denom, .. } => {
+            ProposalTemplate::TreasurySpend {
+                recipient,
+                amount,
+                denom,
+                ..
+            } => {
                 format!("Spend {} {} to {}", amount, denom, recipient)
             }
-            ProposalTemplate::ParameterChange { parameter, new_value, .. } => {
+            ProposalTemplate::ParameterChange {
+                parameter,
+                new_value,
+                ..
+            } => {
                 format!("Set {:?} to {}", parameter, new_value)
             }
-            ProposalTemplate::GrantFunding { grant_id, total_funding, denom } => {
+            ProposalTemplate::GrantFunding {
+                grant_id,
+                total_funding,
+                denom,
+            } => {
                 format!("Fund grant #{} with {} {}", grant_id, total_funding, denom)
             }
-            ProposalTemplate::IssuerManagement { action, issuer_address, .. } => {
+            ProposalTemplate::IssuerManagement {
+                action,
+                issuer_address,
+                ..
+            } => {
                 format!("{:?} issuer {}", action, issuer_address)
             }
-            ProposalTemplate::EmissionUpdate { phase_index, new_rate_per_block, .. } => {
-                format!("Update phase {} emission to {} /block", phase_index, new_rate_per_block)
+            ProposalTemplate::EmissionUpdate {
+                phase_index,
+                new_rate_per_block,
+                ..
+            } => {
+                format!(
+                    "Update phase {} emission to {} /block",
+                    phase_index, new_rate_per_block
+                )
             }
             ProposalTemplate::Emergency { action, .. } => {
                 format!("EMERGENCY: {}", action)
@@ -124,37 +143,62 @@ impl ProposalTemplate {
     /// Auto-generate a proposal description from template fields.
     pub fn auto_description(&self) -> String {
         match self {
-            ProposalTemplate::TreasurySpend { recipient, amount, denom, category, memo } => {
+            ProposalTemplate::TreasurySpend {
+                recipient,
+                amount,
+                denom,
+                category,
+                memo,
+            } => {
                 format!(
                     "Authorize spending {} {} from the treasury to {}.\nCategory: {}\nMemo: {}",
                     amount, denom, recipient, category, memo
                 )
             }
-            ProposalTemplate::ParameterChange { parameter, new_value, rationale } => {
+            ProposalTemplate::ParameterChange {
+                parameter,
+                new_value,
+                rationale,
+            } => {
                 format!(
                     "Change governance parameter {:?} to {}.\nRationale: {}",
                     parameter, new_value, rationale
                 )
             }
-            ProposalTemplate::GrantFunding { grant_id, total_funding, denom } => {
+            ProposalTemplate::GrantFunding {
+                grant_id,
+                total_funding,
+                denom,
+            } => {
                 format!(
                     "Approve funding of {} {} for grant application #{}.",
                     total_funding, denom, grant_id
                 )
             }
-            ProposalTemplate::IssuerManagement { action, issuer_address, justification } => {
+            ProposalTemplate::IssuerManagement {
+                action,
+                issuer_address,
+                justification,
+            } => {
                 format!(
                     "{:?} credential issuer {}.\nJustification: {}",
                     action, issuer_address, justification
                 )
             }
-            ProposalTemplate::EmissionUpdate { phase_index, new_rate_per_block, rationale } => {
+            ProposalTemplate::EmissionUpdate {
+                phase_index,
+                new_rate_per_block,
+                rationale,
+            } => {
                 format!(
                     "Update emission phase {} rate to {} per block.\nRationale: {}",
                     phase_index, new_rate_per_block, rationale
                 )
             }
-            ProposalTemplate::Emergency { action, description } => {
+            ProposalTemplate::Emergency {
+                action,
+                description,
+            } => {
                 format!("EMERGENCY ACTION: {}\n\n{}", action, description)
             }
             ProposalTemplate::TextProposal { summary } => summary.clone(),

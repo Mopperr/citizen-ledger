@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    entry_point, to_json_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo,
-    Response, StdResult, Uint128,
+    entry_point, to_json_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Response,
+    StdResult, Uint128,
 };
 use cw2::set_contract_version;
 
@@ -78,10 +78,7 @@ fn get_emission_rate(phases: &[EmissionPhase], height: u64) -> Uint128 {
 }
 
 /// Update the global reward index based on new emissions
-fn update_global_index(
-    deps: &mut DepsMut,
-    env: &Env,
-) -> Result<Uint128, ContractError> {
+fn update_global_index(deps: &mut DepsMut, env: &Env) -> Result<Uint128, ContractError> {
     let last_height = LAST_DISTRIBUTION_HEIGHT.load(deps.storage)?;
     let current_height = env.block.height;
 
@@ -216,12 +213,13 @@ fn execute_unstake(
     update_global_index(&mut deps, &env)?;
 
     let global_idx = GLOBAL_REWARD_INDEX.load(deps.storage)?;
-    let mut staker = STAKERS
-        .may_load(deps.storage, &info.sender)?
-        .ok_or(ContractError::InsufficientFunds {
-            needed: amount.to_string(),
-            available: "0".to_string(),
-        })?;
+    let mut staker =
+        STAKERS
+            .may_load(deps.storage, &info.sender)?
+            .ok_or(ContractError::InsufficientFunds {
+                needed: amount.to_string(),
+                available: "0".to_string(),
+            })?;
 
     if staker.staked < amount {
         return Err(ContractError::InsufficientFunds {
@@ -279,12 +277,13 @@ fn execute_claim(
     update_global_index(&mut deps, &env)?;
 
     let global_idx = GLOBAL_REWARD_INDEX.load(deps.storage)?;
-    let mut staker = STAKERS
-        .may_load(deps.storage, &info.sender)?
-        .ok_or(ContractError::InsufficientFunds {
-            needed: "staked tokens".to_string(),
-            available: "none".to_string(),
-        })?;
+    let mut staker =
+        STAKERS
+            .may_load(deps.storage, &info.sender)?
+            .ok_or(ContractError::InsufficientFunds {
+                needed: "staked tokens".to_string(),
+                available: "none".to_string(),
+            })?;
 
     // Calculate pending
     let reward = staker
@@ -397,11 +396,11 @@ fn execute_slash(
     }
 
     let addr = deps.api.addr_validate(&staker_addr)?;
-    let mut staker = STAKERS.may_load(deps.storage, &addr)?.ok_or(
-        ContractError::Slashing {
+    let mut staker = STAKERS
+        .may_load(deps.storage, &addr)?
+        .ok_or(ContractError::Slashing {
             reason: format!("Staker {} not found", staker_addr),
-        },
-    )?;
+        })?;
 
     if staker.staked.is_zero() {
         return Err(ContractError::Slashing {
@@ -410,7 +409,9 @@ fn execute_slash(
     }
 
     // Calculate slash amount
-    let slash_amount = staker.staked.multiply_ratio(penalty_bps as u128, 10_000u128);
+    let slash_amount = staker
+        .staked
+        .multiply_ratio(penalty_bps as u128, 10_000u128);
     staker.staked = staker.staked.saturating_sub(slash_amount);
 
     STAKERS.save(deps.storage, &addr, &staker)?;
@@ -479,9 +480,7 @@ fn execute_update_slash_penalty(
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
         QueryMsg::Staker { address } => to_json_binary(&query_staker(deps, address)?),
-        QueryMsg::PendingRewards { address } => {
-            to_json_binary(&query_pending(deps, env, address)?)
-        }
+        QueryMsg::PendingRewards { address } => to_json_binary(&query_pending(deps, env, address)?),
         QueryMsg::CurrentEmissionRate {} => to_json_binary(&query_emission_rate(deps, env)?),
         QueryMsg::EmissionSchedule {} => to_json_binary(&query_schedule(deps)?),
         QueryMsg::Supply {} => to_json_binary(&query_supply(deps)?),
@@ -630,8 +629,8 @@ fn query_slash_history(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, message_info, MockApi};
     use cosmwasm_std::coins;
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env, MockApi};
 
     fn setup(deps: DepsMut) {
         let api = MockApi::default();

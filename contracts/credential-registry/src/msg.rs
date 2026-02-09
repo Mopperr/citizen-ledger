@@ -1,5 +1,5 @@
-use cosmwasm_schema::{cw_serde, QueryResponses};
 use citizen_common::credential::{CredentialType, ZkProof};
+use cosmwasm_schema::{cw_serde, QueryResponses};
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -29,17 +29,11 @@ pub enum ExecuteMsg {
         reason: String,
     },
     /// Add a trusted issuer (admin only)
-    AddIssuer {
-        issuer: String,
-    },
+    AddIssuer { issuer: String },
     /// Remove a trusted issuer (admin only)
-    RemoveIssuer {
-        issuer: String,
-    },
+    RemoveIssuer { issuer: String },
     /// Transfer admin role
-    TransferAdmin {
-        new_admin: String,
-    },
+    TransferAdmin { new_admin: String },
     /// Submit a verification result from an authorized relayer (step 28-29)
     SubmitVerificationResult {
         request_id: String,
@@ -54,13 +48,9 @@ pub enum ExecuteMsg {
         reverification_id: String,
     },
     /// Execute a pending recovery after timelock expires
-    ExecuteRecovery {
-        recovery_id: String,
-    },
+    ExecuteRecovery { recovery_id: String },
     /// Contest a recovery (only callable by old address during timelock)
-    ContestRecovery {
-        recovery_id: String,
-    },
+    ContestRecovery { recovery_id: String },
 }
 
 #[cw_serde]

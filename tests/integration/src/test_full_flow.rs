@@ -6,10 +6,10 @@
 #[cfg(test)]
 mod tests {
     use crate::helpers::*;
-    use cosmwasm_std::Uint128;
-    use cw_multi_test::Executor;
     use citizen_common::credential::CredentialType;
     use citizen_common::governance::{VoteOption, VotingMethod};
+    use cosmwasm_std::Uint128;
+    use cw_multi_test::Executor;
 
     #[test]
     fn full_citizen_lifecycle_credential_to_vote_to_execute() {
@@ -126,7 +126,7 @@ mod tests {
 
     #[test]
     fn staking_and_emission_phases() {
-        let (mut app, system) = deploy_full_system();
+        let (app, system) = deploy_full_system();
 
         // Query initial supply stats
         let supply: staking_emissions::msg::SupplyResponse = app
@@ -202,27 +202,18 @@ mod tests {
         // Verify voting points to correct credential registry
         let voting_config: voting::msg::VotingConfigResponse = app
             .wrap()
-            .query_wasm_smart(
-                system.voting.clone(),
-                &voting::msg::QueryMsg::Config {},
-            )
+            .query_wasm_smart(system.voting.clone(), &voting::msg::QueryMsg::Config {})
             .unwrap();
         assert_eq!(
             voting_config.credential_registry,
             system.credential_registry.to_string()
         );
-        assert_eq!(
-            voting_config.treasury_contract,
-            system.treasury.to_string()
-        );
+        assert_eq!(voting_config.treasury_contract, system.treasury.to_string());
 
         // Verify treasury governance points to voting
         let treasury_config: treasury::msg::TreasuryConfigResponse = app
             .wrap()
-            .query_wasm_smart(
-                system.treasury.clone(),
-                &treasury::msg::QueryMsg::Config {},
-            )
+            .query_wasm_smart(system.treasury.clone(), &treasury::msg::QueryMsg::Config {})
             .unwrap();
         assert_eq!(
             treasury_config.governance_contract,
@@ -232,19 +223,10 @@ mod tests {
         // Verify grants points to governance + treasury
         let grants_config: grants::msg::GrantConfigResponse = app
             .wrap()
-            .query_wasm_smart(
-                system.grants.clone(),
-                &grants::msg::QueryMsg::Config {},
-            )
+            .query_wasm_smart(system.grants.clone(), &grants::msg::QueryMsg::Config {})
             .unwrap();
-        assert_eq!(
-            grants_config.governance_contract,
-            system.voting.to_string()
-        );
-        assert_eq!(
-            grants_config.treasury_contract,
-            system.treasury.to_string()
-        );
+        assert_eq!(grants_config.governance_contract, system.voting.to_string());
+        assert_eq!(grants_config.treasury_contract, system.treasury.to_string());
 
         // Verify staking points to treasury
         let staking_config: staking_emissions::msg::StakingConfigResponse = app
@@ -254,9 +236,6 @@ mod tests {
                 &staking_emissions::msg::QueryMsg::Config {},
             )
             .unwrap();
-        assert_eq!(
-            staking_config.treasury,
-            system.treasury.to_string()
-        );
+        assert_eq!(staking_config.treasury, system.treasury.to_string());
     }
 }

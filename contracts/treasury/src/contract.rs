@@ -1,6 +1,6 @@
 use cosmwasm_std::{
-    entry_point, to_json_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo,
-    Order, Response, StdResult, Uint128,
+    entry_point, to_json_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
+    Response, StdResult, Uint128,
 };
 use cw2::set_contract_version;
 
@@ -80,10 +80,7 @@ pub fn execute(
     }
 }
 
-fn execute_deposit(
-    deps: DepsMut,
-    info: MessageInfo,
-) -> Result<Response, ContractError> {
+fn execute_deposit(deps: DepsMut, info: MessageInfo) -> Result<Response, ContractError> {
     let denom = DENOM.load(deps.storage)?;
     let deposit = info
         .funds
@@ -154,10 +151,7 @@ fn execute_spend(
     // Send funds
     let send_msg = BankMsg::Send {
         to_address: recipient.clone(),
-        amount: vec![Coin {
-            denom,
-            amount,
-        }],
+        amount: vec![Coin { denom, amount }],
     };
 
     Ok(Response::new()
@@ -304,7 +298,9 @@ fn query_allocations(deps: Deps) -> StdResult<AllocationsResponse> {
             (cat, bps)
         })
         .collect();
-    Ok(AllocationsResponse { allocations: allocs })
+    Ok(AllocationsResponse {
+        allocations: allocs,
+    })
 }
 
 fn query_spend_history(
@@ -313,7 +309,7 @@ fn query_spend_history(
     limit: Option<u32>,
 ) -> StdResult<SpendHistoryResponse> {
     let limit = limit.unwrap_or(30).min(100) as usize;
-    let start = start_after.map(|s| cw_storage_plus::Bound::exclusive(s));
+    let start = start_after.map(cw_storage_plus::Bound::exclusive);
 
     let records: Vec<SpendRecordResponse> = SPEND_RECORDS
         .range(deps.storage, start, None, Order::Ascending)
@@ -357,8 +353,8 @@ fn query_config(deps: Deps) -> StdResult<TreasuryConfigResponse> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, message_info, MockApi};
     use cosmwasm_std::coins;
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env, MockApi};
 
     fn setup(deps: DepsMut) {
         let api = MockApi::default();
