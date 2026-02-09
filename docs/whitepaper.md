@@ -421,6 +421,105 @@ Validators who violate network rules face slashing penalties:
 
 Slashed tokens are sent to the treasury, not burned — they fund public programs.
 
+### 9.9 Post-Cap Economics — How Fees Work After All Tokens Are Minted
+
+Around year ~15, all 1,000,000,000 CITIZEN will have been minted. At that point, **no new tokens are created — ever.** The network must sustain itself entirely through fees and real-world revenue. Here's exactly how that works:
+
+#### Where the money comes from (three sources)
+
+**1. Transaction Fees (on-chain activity)**
+
+Every action on Citizen Ledger costs a small fee paid in CITIZEN:
+
+| Action | Estimated Fee |
+|---|---|
+| Simple token transfer | 0.01–0.05 CITIZEN |
+| Governance vote | 0.02 CITIZEN |
+| Grant proposal submission | 0.50 CITIZEN |
+| Credential verification | 0.10 CITIZEN |
+| Smart contract execution | 0.05–0.50 CITIZEN |
+| Demand Discovery idea submission | 0.10 CITIZEN |
+| DEX swap (future) | 0.1% of trade value |
+
+These fees exist during the emission period too, but post-cap they become the **primary** reward source for validators.
+
+**Projected fee revenue at maturity (Year 15+):**
+
+| Scenario | Daily Transactions | Avg Fee | Daily Fee Pool | Annual Fee Pool |
+|---|---|---|---|---|
+| Conservative | 100,000 tx/day | 0.05 CITIZEN | 5,000 | ~1,825,000 CITIZEN/yr |
+| Moderate | 500,000 tx/day | 0.05 CITIZEN | 25,000 | ~9,125,000 CITIZEN/yr |
+| Optimistic | 2,000,000 tx/day | 0.05 CITIZEN | 100,000 | ~36,500,000 CITIZEN/yr |
+
+*For comparison: Cosmos Hub processes ~500K–1M transactions/day at maturity. Osmosis peaks at ~2M/day.*
+
+**2. Infrastructure Revenue (real-world income)**
+
+By year 15, the protocol will have funded hospitals, warehouses, factories, and patents. These generate recurring revenue:
+
+| Revenue Source | Estimated Annual Revenue (Year 15) |
+|---|---|
+| Hospital network (5+ facilities) | 10,000,000–50,000,000 CITIZEN equivalent |
+| Patent licensing portfolio (50+ patents) | 2,000,000–10,000,000 CITIZEN equivalent |
+| Warehouse & manufacturing operations | 5,000,000–20,000,000 CITIZEN equivalent |
+| Equipment leasing | 1,000,000–5,000,000 CITIZEN equivalent |
+| **Total real-world revenue** | **18,000,000–85,000,000 CITIZEN equivalent/yr** |
+
+*Revenue is collected off-chain in fiat, converted to CITIZEN (or stablecoins), and distributed on-chain by the treasury contract.*
+
+**3. Optional Deflationary Mechanisms (governance-controlled)**
+
+Citizens can vote to activate:
+- **Fee burns** — A percentage of transaction fees are permanently burned, reducing supply below 1B. Fewer tokens + same income = each token worth more.
+- **Buyback & burn** — Treasury uses a portion of revenue to buy CITIZEN on the open market and burn it.
+- **Minimum fee floor** — Governance can set a minimum fee to ensure validators always earn a baseline.
+
+#### How fees are distributed post-cap
+
+The same 80/20 split continues, but now applied to **fees + revenue** instead of emissions:
+
+```
+  ┌─────────────────────────────────────────────────────────┐
+  │              TOTAL POST-CAP INCOME                       │
+  │  Transaction Fees + Infrastructure Revenue               │
+  │  (no new tokens minted)                                  │
+  └───────────────┬─────────────────────────────────────────┘
+                  │
+         ┌───────┴────────┐
+         │                │
+    80% to Stakers   20% to Treasury
+         │                │
+    ┌────┴────┐     ┌─────┴──────┐
+    │         │     │            │
+  Validators  Delegators  Grants  Operations
+  (commission)  (pro-rata)  Research  Infra
+```
+
+#### Worked example: Post-cap validator earnings (moderate scenario)
+
+**Total annual income pool:** 9.1M (fees) + 40M (infrastructure revenue) = **~49.1M CITIZEN/year**
+
+Staker share (80%): **~39.3M CITIZEN/year**
+
+| Role | Your Stake | Share of Pool | Annual Earnings | At $2/CITIZEN |
+|---|---|---|---|---|
+| Small delegator | 10,000 CITIZEN | 0.0025% | ~983 CITIZEN | ~$1,966 |
+| Large delegator | 100,000 CITIZEN | 0.025% | ~9,825 CITIZEN | ~$19,650 |
+| Home validator (10K self + 200K delegated) | 210,000 CITIZEN weight | 0.053% | ~20,634 CITIZEN + commission | ~$41,268 |
+| Institutional validator (200K self + 5M delegated) | 5,200,000 CITIZEN weight | 1.3% | ~510,900 CITIZEN + commission | ~$1,021,800 |
+
+*Assumes 400M total staked. Governance bonus multipliers apply on top of these numbers.*
+
+#### Why this is sustainable forever
+
+1. **Fees scale with usage.** More users = more transactions = more fees. The network doesn't need inflation to pay validators.
+2. **Real-world revenue grows.** Every new hospital, patent, or factory adds permanent recurring income to the protocol.
+3. **Supply is fixed (or shrinking).** If governance activates fee burns, supply drops below 1B, making each remaining token more valuable.
+4. **No "death spiral" risk.** Unlike pure-emission chains that collapse when rewards dry up, Citizen Ledger has diversified income from real-world assets that don't depend on crypto market conditions.
+5. **Validators are incentivised to support growth.** More network activity = more fee income for validators. Their interests align with the protocol's success.
+
+**In plain English:** After year ~15, validators get paid from transaction fees (like credit card networks charge merchants) plus real-world revenue from the hospitals, patents, and factories the network built. No new coins needed — the pie doesn't grow, but the income flowing through it does.
+
 ---
 
 ## 10. Node Network
