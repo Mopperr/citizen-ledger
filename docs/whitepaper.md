@@ -286,62 +286,260 @@ Every grant is fully transparent:
 
 ## 9. Staking and Emissions
 
-### 9.1 Emission Model
+### 9.1 Consensus: Proof of Stake (Not Proof of Work)
 
-CITIZEN has a **capped total supply** with a time-based emission schedule. New tokens are minted per block according to a declining phase schedule:
+Citizen Ledger uses **Delegated Proof of Stake (DPoS)** via CometBFT (formerly Tendermint). This is fundamentally different from Bitcoin or Ethereum's old model:
 
-| Phase | Tokens per Block | Duration |
+| | Bitcoin / Old Ethereum (PoW) | Citizen Ledger (DPoS) |
 |---|---|---|
-| Phase 1 (Growth) | Higher rate | First ~2 years |
-| Phase 2 (Maturation) | Medium rate | Years 2–5 |
-| Phase 3 (Stability) | Lower rate | Years 5–10 |
-| Phase 4 (Terminal) | Minimal rate | Until cap reached |
+| How blocks are made | GPUs/ASICs solve math puzzles | Validators take turns proposing blocks |
+| Energy use | Massive — warehouse-scale mining | Minimal — runs on a Raspberry Pi |
+| Hardware requirement | $5,000+ GPU rigs or ASIC miners | $50–$500 (Pi, Mini PC, or cloud VPS) |
+| Who earns rewards | Whoever burns the most electricity | Anyone who stakes tokens + runs a node |
+| Barrier to entry | Very high (capital + electricity) | Very low (stake tokens + cheap hardware) |
+| Security model | 51% of hash power | ⅔ of staked tokens |
 
-Once the cap is reached, no new tokens are minted. The protocol becomes fully fee-sustained.
+**In plain English:** You don't mine CITIZEN. You don't need a GPU, you don't need to solve puzzles, and you don't burn electricity. You lock (stake) your CITIZEN tokens, run a lightweight node, and the protocol selects validators to produce blocks based on their stake. Honest validators earn rewards every block (~6 seconds). Dishonest ones get slashed.
 
-### 9.2 Staking Mechanics
+This is the same model used by modern Ethereum (post-Merge), Cosmos Hub, Osmosis, and other major networks.
+
+### 9.2 Emission Model — Concrete Numbers
+
+CITIZEN has a **hard cap of 1,000,000,000 tokens**. New tokens are minted per block on a declining schedule:
+
+| Phase | Duration | Tokens per Block | Blocks/Year* | Annual Emission | Cumulative |
+|---|---|---|---|---|---|
+| Phase 1 (Growth) | Years 0–2 | 47.56 CITIZEN | 5,256,000 | ~250,000,000 | 250,000,000 (25%) |
+| Phase 2 (Maturation) | Years 2–5 | 19.02 CITIZEN | 5,256,000 | ~100,000,000 | 550,000,000 (55%) |
+| Phase 3 (Stability) | Years 5–10 | 11.42 CITIZEN | 5,256,000 | ~60,000,000 | 850,000,000 (85%) |
+| Phase 4 (Terminal) | Years 10–15 | 5.71 CITIZEN | 5,256,000 | ~30,000,000 | 1,000,000,000 (100%) |
+
+*\*Based on ~6-second block time → ~14,400 blocks/day → ~5,256,000 blocks/year.*
+
+Once the cap is reached (estimated year ~15), **no new tokens are minted.** The protocol becomes fully fee-sustained.
+
+### 9.3 Emission Split (per block)
+
+Every block, newly minted tokens are split:
+
+| Recipient | Share | Phase 1 per Block | Phase 2 per Block |
+|---|---|---|---|
+| **Validators & Stakers** | 80% | 38.05 CITIZEN | 15.22 CITIZEN |
+| **Treasury** | 20% | 9.51 CITIZEN | 3.80 CITIZEN |
+| **Total** | 100% | 47.56 CITIZEN | 19.02 CITIZEN |
+
+### 9.4 Staking Mechanics
 
 Token holders stake CITIZEN to:
-- **Earn block rewards** — Pro-rata share of newly minted tokens.
+- **Earn block rewards** — Pro-rata share of the 80% staker emission.
 - **Earn fee share** — Portion of transaction fees distributed to stakers.
+- **Earn infrastructure yield** — Share of real-world revenue (hospitals, patents, factories).
 - **Participate in governance** — Stakers demonstrate long-term commitment.
 - **Qualify for node operation** — Minimum stake required to run a validator node.
 
-### 9.3 Treasury Share
+**Unbonding period:** 21 days. When you unstake, tokens are locked for 21 days before they become liquid. This prevents short-term speculation and ensures validators maintain skin in the game.
 
-A configurable percentage of emissions (default: 20%) routes directly to the treasury rather than to stakers, ensuring continuous funding for public programs even during early network stages.
+### 9.5 Staking APY by Phase
 
-### 9.4 Slashing
+The Annual Percentage Yield (APY) for stakers depends on total staked supply. These estimates assume **40% of circulating supply is staked** (typical for Cosmos chains):
+
+| Phase | Circulating Supply | 40% Staked | Annual Emission to Stakers (80%) | Base Staking APY |
+|---|---|---|---|---|
+| Phase 1 | ~125M (midpoint) | 50M | 200,000,000 | **~400%** (early high, decreasing rapidly) |
+| Phase 2 | ~400M (midpoint) | 160M | 80,000,000 | **~50%** |
+| Phase 3 | ~700M (midpoint) | 280M | 48,000,000 | **~17%** |
+| Phase 4 | ~925M (midpoint) | 370M | 24,000,000 | **~6.5%** |
+| Post-cap | 1,000M | 400M | 0 (fees + revenue only) | **~3–5%** (from fees + infrastructure yield) |
+
+*Note: Phase 1 APY is very high to bootstrap the network. Early stakers earn the most, similar to early Bitcoin miners. APY naturally declines as more tokens enter circulation.*
+
+### 9.6 Compound Staking — What $1,000 Becomes
+
+If you stake and **re-stake all rewards every month** (compounding), here's what a $1,000 initial position grows to across different entry points:
+
+#### Scenario A: Enter at Launch (Phase 1)
+
+Assumes initial purchase of 10,000 CITIZEN at $0.10 each.
+
+| Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
+|---|---|---|---|
+| Year 1 | 10,000 → 43,200 CITIZEN | +33,200 CITIZEN | ~332% |
+| Year 2 | 43,200 → 108,000 CITIZEN | +98,000 CITIZEN | ~150% (rate declining) |
+| Year 3 | 108,000 → 157,000 CITIZEN | +147,000 CITIZEN | ~45% |
+| Year 5 | 157,000 → 206,000 CITIZEN | +196,000 CITIZEN | ~16% |
+| Year 10 | 206,000 → 268,000 CITIZEN | +258,000 CITIZEN | ~5% |
+
+**Result: Your initial 10,000 CITIZEN grows to ~268,000 CITIZEN through compounding alone — 26.8× your original position.**
+
+#### Scenario B: Enter at Year 3 (Phase 2)
+
+Assumes purchase of 10,000 CITIZEN at market price.
+
+| Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
+|---|---|---|---|
+| Year 3 | 10,000 → 14,500 CITIZEN | +4,500 CITIZEN | ~45% |
+| Year 5 | 14,500 → 19,800 CITIZEN | +9,800 CITIZEN | ~17% |
+| Year 10 | 19,800 → 26,100 CITIZEN | +16,100 CITIZEN | ~5.5% |
+
+**Result: 10,000 → ~26,100 CITIZEN — 2.6× your position over 7 years.**
+
+#### Scenario C: Enter at Year 6 (Phase 3, Steady State)
+
+| Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
+|---|---|---|---|
+| Year 6 | 10,000 → 11,700 CITIZEN | +1,700 CITIZEN | ~17% |
+| Year 10 | 11,700 → 14,600 CITIZEN | +4,600 CITIZEN | ~5.7% |
+| Year 15 | 14,600 → 17,800 CITIZEN | +7,800 CITIZEN | ~4% (fees + revenue) |
+
+**Result: 10,000 → ~17,800 CITIZEN — 1.78× over 9 years, sustainable long-term.**
+
+*All scenarios exclude infrastructure yield, governance bonuses, and token price appreciation — actual returns may be higher.*
+
+### 9.7 Governance Participation Bonus
+
+Stakers who also **actively vote on governance proposals** earn a yield multiplier:
+
+| Voting Activity | Multiplier on Base Yield |
+|---|---|
+| No votes cast | 1.0× (base rate) |
+| Voted on 25%+ of proposals | 1.1× |
+| Voted on 50%+ of proposals | 1.25× |
+| Voted on 75%+ of proposals | 1.5× |
+| Voted on 100% of proposals | 1.8× |
+
+*Example: If base staking APY is 17% and you vote on all proposals, your effective APY is 17% × 1.8 = 30.6%.*
+
+### 9.8 Slashing
 
 Validators who violate network rules face slashing penalties:
-- **Downtime** — Small percentage slashed for extended unavailability.
-- **Malicious behavior** — Larger penalty for equivocation or censorship attempts.
-- Default slash penalty: 5% of staked amount.
+
+| Violation | Penalty | Jail Duration |
+|---|---|---|
+| Downtime (missed >50 of last 100 blocks) | 0.5% of stake | 10 minutes |
+| Double signing (equivocation) | 5% of stake | Permanent (governance can unjail) |
+| Censorship (proven tx filtering) | 3% of stake | 24 hours |
+
+Slashed tokens are sent to the treasury, not burned — they fund public programs.
 
 ---
 
 ## 10. Node Network
 
-### 10.1 Node Types
+### 10.1 Consensus Model — How Validators Work
 
-The network is secured by a mixed node ecosystem designed for broad participation:
+Citizen Ledger runs on **CometBFT consensus** (the engine behind Cosmos Hub, Osmosis, and 50+ production chains). Here's how it works:
 
-**Home Nodes.** Individual citizens running low-cost hardware (e.g., Raspberry Pi or Mini PC). Lower stake requirement, designed to maximize geographic distribution and decentralization.
+1. **Validator set** — The top N staked nodes form the active validator set (initially N = 100, expandable by governance).
+2. **Block proposal** — Each block, one validator is randomly selected (weighted by stake) to propose the block.
+3. **Voting rounds** — The other validators vote to confirm the block in two rounds (pre-vote + pre-commit).
+4. **Finality** — Once ⅔+ of stake weight confirms, the block is **instantly final** (no waiting for 6 confirmations like Bitcoin).
+5. **Rewards** — The block proposer gets a slight bonus; all active validators earn proportional to their stake.
 
-**Institutional Nodes.** Organizations running higher-availability infrastructure with stronger uptime guarantees, larger stakes, and professional monitoring.
+**Block time: ~6 seconds.** Final. No reorganizations. No orphan blocks.
 
-### 10.2 Incentives
+### 10.2 Node Types and Requirements
 
-- **Fee sharing** — Node operators earn a share of transaction fees proportional to uptime and stake.
-- **Emission rewards** — Block rewards distributed to active validators.
-- **Governance participation bonus** — Nodes that also actively participate in governance earn boosted rewards.
+| | Home Node | Institutional Node |
+|---|---|---|
+| **Hardware** | Raspberry Pi 5 (8GB), Mini PC, or old laptop | Dedicated server or cloud VPS |
+| **CPU** | 4 cores | 8+ cores |
+| **RAM** | 8 GB | 16–32 GB |
+| **Storage** | 256 GB SSD | 1 TB NVMe SSD |
+| **Internet** | 50 Mbps, stable residential | 1 Gbps, enterprise SLA |
+| **Cost** | $50–$200 hardware + electricity | $50–$200/month cloud or co-location |
+| **Min. stake** | 1,000 CITIZEN | 50,000 CITIZEN |
+| **Max commission** | 10% | 20% |
+| **Expected uptime** | 95%+ | 99.5%+ |
 
-### 10.3 Distribution Goals
+### 10.3 Validator Earnings — Concrete Numbers
+
+Validator earnings come from three sources: **block emissions, transaction fees, and commission on delegated stake.**
+
+#### Source 1: Block Emission Rewards
+
+Total emission per year to stakers (80% of emission):
+
+| Phase | Annual Staker Emission | Per Validator (100 equal validators) | Per Validator per Month |
+|---|---|---|---|
+| Phase 1 | 200,000,000 CITIZEN | 2,000,000 CITIZEN/yr | ~166,667 CITIZEN/mo |
+| Phase 2 | 80,000,000 CITIZEN | 800,000 CITIZEN/yr | ~66,667 CITIZEN/mo |
+| Phase 3 | 48,000,000 CITIZEN | 480,000 CITIZEN/yr | ~40,000 CITIZEN/mo |
+| Phase 4 | 24,000,000 CITIZEN | 240,000 CITIZEN/yr | ~20,000 CITIZEN/mo |
+
+*Actual per-validator earnings scale with their stake weight. Top validators earn more; smaller validators earn less.*
+
+#### Source 2: Transaction Fees
+
+| Network Stage | Estimated Daily Transactions | Avg Fee | Daily Fee Pool | Annual Fee Pool |
+|---|---|---|---|---|
+| Early (Year 1) | 5,000 tx/day | 0.05 CITIZEN | 250 CITIZEN | ~91,250 CITIZEN |
+| Growing (Year 3) | 50,000 tx/day | 0.05 CITIZEN | 2,500 CITIZEN | ~912,500 CITIZEN |
+| Mature (Year 5+) | 200,000 tx/day | 0.05 CITIZEN | 10,000 CITIZEN | ~3,650,000 CITIZEN |
+
+80% of fees go to validators/stakers, 20% to treasury.
+
+#### Source 3: Commission
+
+Validators set a **commission rate** on delegated stake. This is a percentage of the rewards that delegators earn through your node.
+
+| Commission Rate | You Have Staked | Others Delegate to You | Your Commission Income (Phase 2, APY ~50%) |
+|---|---|---|---|
+| 5% | 10,000 CITIZEN | 100,000 delegated | 5% × 50,000 rewards = 2,500 CITIZEN/yr |
+| 10% | 50,000 CITIZEN | 500,000 delegated | 10% × 250,000 rewards = 25,000 CITIZEN/yr |
+| 5% | 100,000 CITIZEN | 2,000,000 delegated | 5% × 1,000,000 rewards = 50,000 CITIZEN/yr |
+
+### 10.4 Worked Example: Home Node Validator (Phase 2, Year 3)
+
+**Setup:** Raspberry Pi 5, 10,000 CITIZEN self-staked, 5% commission, 200,000 CITIZEN delegated to you, 98% uptime.
+
+| Income Source | Annual Earnings |
+|---|---|
+| Self-stake rewards (10K at ~50% APY) | 5,000 CITIZEN |
+| Commission (5% of delegator rewards: 200K × 50%) | 5,000 CITIZEN |
+| Fee share (proportional: 210K/total_staked × fee pool) | ~120 CITIZEN |
+| Governance bonus (vote on all proposals, 1.8×) | +4,500 CITIZEN bonus |
+| **Total** | **~14,620 CITIZEN/year** |
+
+At $0.50/CITIZEN = **~$7,310/year from a Raspberry Pi.**
+At $1.00/CITIZEN = **~$14,620/year.**
+
+**Hardware cost:** ~$100 one-time.   **Electricity:** ~$15/year.   **ROI: Weeks, not years.**
+
+### 10.5 Worked Example: Institutional Validator (Phase 2, Year 3)
+
+**Setup:** Cloud VPS, 200,000 CITIZEN self-staked, 10% commission, 5,000,000 CITIZEN delegated, 99.9% uptime.
+
+| Income Source | Annual Earnings |
+|---|---|
+| Self-stake rewards (200K at ~50% APY) | 100,000 CITIZEN |
+| Commission (10% of delegator rewards: 5M × 50%) | 250,000 CITIZEN |
+| Fee share | ~6,800 CITIZEN |
+| Governance bonus (1.5× — votes on 75% of proposals) | +75,000 CITIZEN bonus |
+| **Total** | **~431,800 CITIZEN/year** |
+
+At $0.50/CITIZEN = **~$215,900/year.**   At $1.00/CITIZEN = **~$431,800/year.**
+
+**Operating cost:** ~$2,400/year (cloud VPS).
+
+### 10.6 Delegation — Earning Without Running a Node
+
+Citizens who don't want to run a node can **delegate** their CITIZEN to any validator and earn staking rewards minus the validator's commission:
+
+| Your Delegation | Validator Commission | Base APY | Your Effective APY | Annual Earnings |
+|---|---|---|---|---|
+| 1,000 CITIZEN | 5% | 50% (Phase 2) | 47.5% | 475 CITIZEN |
+| 10,000 CITIZEN | 5% | 50% (Phase 2) | 47.5% | 4,750 CITIZEN |
+| 10,000 CITIZEN | 10% | 17% (Phase 3) | 15.3% | 1,530 CITIZEN |
+| 100,000 CITIZEN | 5% | 17% (Phase 3) | 16.15% | 16,150 CITIZEN |
+
+*You keep custody of your tokens. Delegation does not transfer ownership — you can undelegate at any time (21-day unbonding period).*
+
+### 10.7 Distribution Goals
 
 The protocol explicitly targets geographic diversity through:
-- Incentive bonuses for nodes in underserved regions.
-- Maximum cap per region to prevent geographic concentration.
-- Redundancy targets to ensure network resilience.
+- Incentive bonuses for nodes in underserved regions (up to +20% reward boost).
+- Maximum cap per region to prevent geographic concentration (no more than 15% of validator power in one country).
+- Redundancy targets to ensure network resilience across continents.
 
 ---
 
@@ -545,14 +743,14 @@ Citizens buy CITIZEN → Treasury grows → Funds research & buildings
 
 ### 15.2 Emission Schedule
 
-Tokens are emitted on a block-by-block declining schedule across four phases:
+Tokens are emitted on a block-by-block declining schedule across four phases (~6-second blocks, ~5,256,000 blocks/year):
 
-| Phase | Duration | Emission Rate | Cumulative Supply |
-|---|---|---|---|
-| Phase 1 (Growth) | ~2 years | Highest per-block rate | ~25% of max |
-| Phase 2 (Maturation) | Years 2–5 | ~50% reduction | ~55% of max |
-| Phase 3 (Stability) | Years 5–10 | ~75% reduction | ~85% of max |
-| Phase 4 (Terminal) | Year 10+ | Minimal rate | 100% of max (cap) |
+| Phase | Duration | Tokens per Block | Annual Emission | Cumulative Supply |
+|---|---|---|---|---|
+| Phase 1 (Growth) | Years 0–2 | 47.56 CITIZEN | ~250,000,000 | 250M → 500M (25–50%) |
+| Phase 2 (Maturation) | Years 2–5 | 19.02 CITIZEN | ~100,000,000 | 500M → 800M (50–80%) |
+| Phase 3 (Stability) | Years 5–10 | 11.42 CITIZEN | ~60,000,000 | 800M → 950M (80–95%) |
+| Phase 4 (Terminal) | Years 10–15 | 5.71 CITIZEN | ~30,000,000 | 950M → 1,000M (100%) |
 
 ### 15.3 Allocation Split (per block)
 
