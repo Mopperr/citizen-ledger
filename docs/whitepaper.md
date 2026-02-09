@@ -318,42 +318,56 @@ CITIZEN has a **hard cap of 1,000,000,000 tokens**. New tokens are minted per bl
 
 Once the cap is reached (estimated year ~15), **no new tokens are minted.** The protocol becomes fully fee-sustained.
 
-### 9.3 Emission Split (per block)
+### 9.3 Two-Layer Distribution Model
 
-Every block, newly minted tokens are split:
+Citizen Ledger uses a **two-layer distribution model** rather than a single flat split. Different income types have different splits, reflecting who created the value:
+
+| Income Type | Stakers / Validators | Treasury | Rationale |
+|---|---|---|---|
+| **Block emissions** | **75%** | **25%** | Rewards stakers while providing stronger treasury funding for the capital-intensive mission |
+| **Transaction fees** | **80%** | **20%** | Validators earn more from the network activity they secure |
+| **Infrastructure revenue** (hospitals, factories, warehouses) | **40%** | **60%** | Treasury funded these assets — it recaptures more to fund MORE assets |
+| **Patent / IP royalties** | **50%** | **50%** | Even split — rewards holders while growing the IP portfolio |
+| **Slashed tokens** | **0%** | **100%** | Penalties go entirely to public programs |
+
+**Why two layers?** A hospital that the treasury built and funded should return more to the treasury so it can build the *next* hospital. Meanwhile, block emissions and fees should primarily reward the people securing the network. This creates a compounding flywheel: treasury → builds assets → revenue → 60% back to treasury → builds more assets.
+
+### 9.4 Emission Split (per block)
+
+Every block, newly minted tokens are split 75/25:
 
 | Recipient | Share | Phase 1 per Block | Phase 2 per Block |
 |---|---|---|---|
-| **Validators & Stakers** | 80% | 38.05 CITIZEN | 15.22 CITIZEN |
-| **Treasury** | 20% | 9.51 CITIZEN | 3.80 CITIZEN |
+| **Validators & Stakers** | 75% | 35.67 CITIZEN | 14.27 CITIZEN |
+| **Treasury** | 25% | 11.89 CITIZEN | 4.76 CITIZEN |
 | **Total** | 100% | 47.56 CITIZEN | 19.02 CITIZEN |
 
-### 9.4 Staking Mechanics
+### 9.5 Staking Mechanics
 
 Token holders stake CITIZEN to:
-- **Earn block rewards** — Pro-rata share of the 80% staker emission.
-- **Earn fee share** — Portion of transaction fees distributed to stakers.
-- **Earn infrastructure yield** — Share of real-world revenue (hospitals, patents, factories).
+- **Earn block rewards** — Pro-rata share of the 75% staker emission.
+- **Earn fee share** — 80% of transaction fees distributed to stakers.
+- **Earn infrastructure yield** — 40% of real-world revenue (hospitals, patents, factories).
 - **Participate in governance** — Stakers demonstrate long-term commitment.
 - **Qualify for node operation** — Minimum stake required to run a validator node.
 
 **Unbonding period:** 21 days. When you unstake, tokens are locked for 21 days before they become liquid. This prevents short-term speculation and ensures validators maintain skin in the game.
 
-### 9.5 Staking APY by Phase
+### 9.6 Staking APY by Phase
 
 The Annual Percentage Yield (APY) for stakers depends on total staked supply. These estimates assume **40% of circulating supply is staked** (typical for Cosmos chains):
 
-| Phase | Circulating Supply | 40% Staked | Annual Emission to Stakers (80%) | Base Staking APY |
+| Phase | Circulating Supply | 40% Staked | Annual Emission to Stakers (75%) | Base Staking APY |
 |---|---|---|---|---|
-| Phase 1 | ~125M (midpoint) | 50M | 200,000,000 | **~400%** (early high, decreasing rapidly) |
-| Phase 2 | ~400M (midpoint) | 160M | 80,000,000 | **~50%** |
-| Phase 3 | ~700M (midpoint) | 280M | 48,000,000 | **~17%** |
-| Phase 4 | ~925M (midpoint) | 370M | 24,000,000 | **~6.5%** |
-| Post-cap | 1,000M | 400M | 0 (fees + revenue only) | **~3–5%** (from fees + infrastructure yield) |
+| Phase 1 | ~125M (midpoint) | 50M | 187,500,000 | **~375%** (early high, decreasing rapidly) |
+| Phase 2 | ~400M (midpoint) | 160M | 75,000,000 | **~47%** |
+| Phase 3 | ~700M (midpoint) | 280M | 45,000,000 | **~16%** |
+| Phase 4 | ~925M (midpoint) | 370M | 22,500,000 | **~6%** |
+| Post-cap | 1,000M | 400M | 0 (fees + revenue only) | **~4–8%** (fees + infrastructure yield + IP royalties) |
 
 *Note: Phase 1 APY is very high to bootstrap the network. Early stakers earn the most, similar to early Bitcoin miners. APY naturally declines as more tokens enter circulation.*
 
-### 9.6 Compound Staking — What $1,000 Becomes
+### 9.7 Compound Staking — What $1,000 Becomes
 
 If you stake and **re-stake all rewards every month** (compounding), here's what a $1,000 initial position grows to across different entry points:
 
@@ -395,7 +409,7 @@ Assumes purchase of 10,000 CITIZEN at market price.
 
 *All scenarios exclude infrastructure yield, governance bonuses, and token price appreciation — actual returns may be higher.*
 
-### 9.7 Governance Participation Bonus
+### 9.8 Governance Participation Bonus
 
 Stakers who also **actively vote on governance proposals** earn a yield multiplier:
 
@@ -409,7 +423,7 @@ Stakers who also **actively vote on governance proposals** earn a yield multipli
 
 *Example: If base staking APY is 17% and you vote on all proposals, your effective APY is 17% × 1.8 = 30.6%.*
 
-### 9.8 Slashing
+### 9.9 Slashing
 
 Validators who violate network rules face slashing penalties:
 
@@ -421,7 +435,7 @@ Validators who violate network rules face slashing penalties:
 
 Slashed tokens are sent to the treasury, not burned — they fund public programs.
 
-### 9.9 Post-Cap Economics — How Fees Work After All Tokens Are Minted
+### 9.10 Post-Cap Economics — How Fees Work After All Tokens Are Minted
 
 Around year ~15, all 1,000,000,000 CITIZEN will have been minted. At that point, **no new tokens are created — ever.** The network must sustain itself entirely through fees and real-world revenue. Here's exactly how that works:
 
@@ -474,39 +488,49 @@ Citizens can vote to activate:
 - **Buyback & burn** — Treasury uses a portion of revenue to buy CITIZEN on the open market and burn it.
 - **Minimum fee floor** — Governance can set a minimum fee to ensure validators always earn a baseline.
 
-#### How fees are distributed post-cap
+#### How income is distributed post-cap
 
-The same 80/20 split continues, but now applied to **fees + revenue** instead of emissions:
+The two-layer split continues — each income type retains its own ratio:
 
 ```
-  ┌─────────────────────────────────────────────────────────┐
-  │              TOTAL POST-CAP INCOME                       │
-  │  Transaction Fees + Infrastructure Revenue               │
-  │  (no new tokens minted)                                  │
-  └───────────────┬─────────────────────────────────────────┘
-                  │
-         ┌───────┴────────┐
-         │                │
-    80% to Stakers   20% to Treasury
-         │                │
-    ┌────┴────┐     ┌─────┴──────┐
-    │         │     │            │
-  Validators  Delegators  Grants  Operations
-  (commission)  (pro-rata)  Research  Infra
+  ┌─────────────────────────────────────────────────────────────┐
+  │                  TOTAL POST-CAP INCOME                      │
+  │  (no new tokens minted — all income from fees & revenue)    │
+  └──────────────────────┬──────────────────────────────────────┘
+                         │
+        ┌────────────────┼────────────────────┐
+        │                │                    │
+  Transaction Fees  Infrastructure Rev   Patent/IP Royalties
+   (80% / 20%)       (40% / 60%)          (50% / 50%)
+   Stakers Treasury   Stakers Treasury    Stakers Treasury
+        │                │                    │
+        └────────────────┴────────────────────┘
+                         │
+               ┌─────────┴──────────┐
+               │                    │
+          STAKER POOL          TREASURY POOL
+          │                    │
+     Validators &         Grants, Research,
+     Delegators           New Infrastructure
 ```
 
-#### Worked example: Post-cap validator earnings (moderate scenario)
+#### Worked example: Post-cap earnings (moderate scenario)
 
-**Total annual income pool:** 9.1M (fees) + 40M (infrastructure revenue) = **~49.1M CITIZEN/year**
+| Income Source | Annual Total | Staker Share | Treasury Share |
+|---|---|---|---|
+| Transaction fees | 9,125,000 CITIZEN | 7,300,000 (80%) | 1,825,000 (20%) |
+| Infrastructure revenue | 40,000,000 CITIZEN | 16,000,000 (40%) | 24,000,000 (60%) |
+| Patent/IP royalties | 6,000,000 CITIZEN | 3,000,000 (50%) | 3,000,000 (50%) |
+| **Totals** | **55,125,000** | **26,300,000** | **28,825,000** |
 
-Staker share (80%): **~39.3M CITIZEN/year**
+**Staker pool: ~26.3M CITIZEN/year.** Treasury pool: ~28.8M CITIZEN/year (funds the next wave of hospitals, research, and factories).
 
-| Role | Your Stake | Share of Pool | Annual Earnings | At $2/CITIZEN |
+| Role | Your Stake | Share of Staker Pool | Annual Earnings | At $2/CITIZEN |
 |---|---|---|---|---|
-| Small delegator | 10,000 CITIZEN | 0.0025% | ~983 CITIZEN | ~$1,966 |
-| Large delegator | 100,000 CITIZEN | 0.025% | ~9,825 CITIZEN | ~$19,650 |
-| Home validator (10K self + 200K delegated) | 210,000 CITIZEN weight | 0.053% | ~20,634 CITIZEN + commission | ~$41,268 |
-| Institutional validator (200K self + 5M delegated) | 5,200,000 CITIZEN weight | 1.3% | ~510,900 CITIZEN + commission | ~$1,021,800 |
+| Small delegator | 10,000 CITIZEN | 0.0025% | ~658 CITIZEN | ~$1,316 |
+| Large delegator | 100,000 CITIZEN | 0.025% | ~6,575 CITIZEN | ~$13,150 |
+| Home validator (10K self + 200K delegated) | 210,000 CITIZEN weight | 0.053% | ~13,808 CITIZEN + commission | ~$27,616 |
+| Institutional validator (200K self + 5M delegated) | 5,200,000 CITIZEN weight | 1.3% | ~341,900 CITIZEN + commission | ~$683,800 |
 
 *Assumes 400M total staked. Governance bonus multipliers apply on top of these numbers.*
 
@@ -556,14 +580,14 @@ Validator earnings come from three sources: **block emissions, transaction fees,
 
 #### Source 1: Block Emission Rewards
 
-Total emission per year to stakers (80% of emission):
+Total emission per year to stakers (75% of emission):
 
 | Phase | Annual Staker Emission | Per Validator (100 equal validators) | Per Validator per Month |
 |---|---|---|---|
-| Phase 1 | 200,000,000 CITIZEN | 2,000,000 CITIZEN/yr | ~166,667 CITIZEN/mo |
-| Phase 2 | 80,000,000 CITIZEN | 800,000 CITIZEN/yr | ~66,667 CITIZEN/mo |
-| Phase 3 | 48,000,000 CITIZEN | 480,000 CITIZEN/yr | ~40,000 CITIZEN/mo |
-| Phase 4 | 24,000,000 CITIZEN | 240,000 CITIZEN/yr | ~20,000 CITIZEN/mo |
+| Phase 1 | 187,500,000 CITIZEN | 1,875,000 CITIZEN/yr | ~156,250 CITIZEN/mo |
+| Phase 2 | 75,000,000 CITIZEN | 750,000 CITIZEN/yr | ~62,500 CITIZEN/mo |
+| Phase 3 | 45,000,000 CITIZEN | 450,000 CITIZEN/yr | ~37,500 CITIZEN/mo |
+| Phase 4 | 22,500,000 CITIZEN | 225,000 CITIZEN/yr | ~18,750 CITIZEN/mo |
 
 *Actual per-validator earnings scale with their stake weight. Top validators earn more; smaller validators earn less.*
 
@@ -575,17 +599,17 @@ Total emission per year to stakers (80% of emission):
 | Growing (Year 3) | 50,000 tx/day | 0.05 CITIZEN | 2,500 CITIZEN | ~912,500 CITIZEN |
 | Mature (Year 5+) | 200,000 tx/day | 0.05 CITIZEN | 10,000 CITIZEN | ~3,650,000 CITIZEN |
 
-80% of fees go to validators/stakers, 20% to treasury.
+80% of fees go to validators/stakers, 20% to treasury. Infrastructure revenue is split 40/60, and IP royalties 50/50 (see Section 9.3).
 
 #### Source 3: Commission
 
 Validators set a **commission rate** on delegated stake. This is a percentage of the rewards that delegators earn through your node.
 
-| Commission Rate | You Have Staked | Others Delegate to You | Your Commission Income (Phase 2, APY ~50%) |
+| Commission Rate | You Have Staked | Others Delegate to You | Your Commission Income (Phase 2, APY ~47%) |
 |---|---|---|---|
-| 5% | 10,000 CITIZEN | 100,000 delegated | 5% × 50,000 rewards = 2,500 CITIZEN/yr |
-| 10% | 50,000 CITIZEN | 500,000 delegated | 10% × 250,000 rewards = 25,000 CITIZEN/yr |
-| 5% | 100,000 CITIZEN | 2,000,000 delegated | 5% × 1,000,000 rewards = 50,000 CITIZEN/yr |
+| 5% | 10,000 CITIZEN | 100,000 delegated | 5% × 47,000 rewards = 2,350 CITIZEN/yr |
+| 10% | 50,000 CITIZEN | 500,000 delegated | 10% × 235,000 rewards = 23,500 CITIZEN/yr |
+| 5% | 100,000 CITIZEN | 2,000,000 delegated | 5% × 940,000 rewards = 47,000 CITIZEN/yr |
 
 ### 10.4 Worked Example: Home Node Validator (Phase 2, Year 3)
 
@@ -593,14 +617,14 @@ Validators set a **commission rate** on delegated stake. This is a percentage of
 
 | Income Source | Annual Earnings |
 |---|---|
-| Self-stake rewards (10K at ~50% APY) | 5,000 CITIZEN |
-| Commission (5% of delegator rewards: 200K × 50%) | 5,000 CITIZEN |
+| Self-stake rewards (10K at ~47% APY) | 4,700 CITIZEN |
+| Commission (5% of delegator rewards: 200K × 47%) | 4,700 CITIZEN |
 | Fee share (proportional: 210K/total_staked × fee pool) | ~120 CITIZEN |
-| Governance bonus (vote on all proposals, 1.8×) | +4,500 CITIZEN bonus |
-| **Total** | **~14,620 CITIZEN/year** |
+| Governance bonus (vote on all proposals, 1.8×) | +4,230 CITIZEN bonus |
+| **Total** | **~13,750 CITIZEN/year** |
 
-At $0.50/CITIZEN = **~$7,310/year from a Raspberry Pi.**
-At $1.00/CITIZEN = **~$14,620/year.**
+At $0.50/CITIZEN = **~$6,875/year from a Raspberry Pi.**
+At $1.00/CITIZEN = **~$13,750/year.**
 
 **Hardware cost:** ~$100 one-time.   **Electricity:** ~$15/year.   **ROI: Weeks, not years.**
 
@@ -610,13 +634,13 @@ At $1.00/CITIZEN = **~$14,620/year.**
 
 | Income Source | Annual Earnings |
 |---|---|
-| Self-stake rewards (200K at ~50% APY) | 100,000 CITIZEN |
-| Commission (10% of delegator rewards: 5M × 50%) | 250,000 CITIZEN |
+| Self-stake rewards (200K at ~47% APY) | 94,000 CITIZEN |
+| Commission (10% of delegator rewards: 5M × 47%) | 235,000 CITIZEN |
 | Fee share | ~6,800 CITIZEN |
-| Governance bonus (1.5× — votes on 75% of proposals) | +75,000 CITIZEN bonus |
-| **Total** | **~431,800 CITIZEN/year** |
+| Governance bonus (1.5× — votes on 75% of proposals) | +70,500 CITIZEN bonus |
+| **Total** | **~406,300 CITIZEN/year** |
 
-At $0.50/CITIZEN = **~$215,900/year.**   At $1.00/CITIZEN = **~$431,800/year.**
+At $0.50/CITIZEN = **~$203,150/year.**   At $1.00/CITIZEN = **~$406,300/year.**
 
 **Operating cost:** ~$2,400/year (cloud VPS).
 
@@ -626,10 +650,10 @@ Citizens who don't want to run a node can **delegate** their CITIZEN to any vali
 
 | Your Delegation | Validator Commission | Base APY | Your Effective APY | Annual Earnings |
 |---|---|---|---|---|
-| 1,000 CITIZEN | 5% | 50% (Phase 2) | 47.5% | 475 CITIZEN |
-| 10,000 CITIZEN | 5% | 50% (Phase 2) | 47.5% | 4,750 CITIZEN |
-| 10,000 CITIZEN | 10% | 17% (Phase 3) | 15.3% | 1,530 CITIZEN |
-| 100,000 CITIZEN | 5% | 17% (Phase 3) | 16.15% | 16,150 CITIZEN |
+| 1,000 CITIZEN | 5% | 47% (Phase 2) | 44.65% | 447 CITIZEN |
+| 10,000 CITIZEN | 5% | 47% (Phase 2) | 44.65% | 4,465 CITIZEN |
+| 10,000 CITIZEN | 10% | 16% (Phase 3) | 14.4% | 1,440 CITIZEN |
+| 100,000 CITIZEN | 5% | 16% (Phase 3) | 15.2% | 15,200 CITIZEN |
 
 *You keep custody of your tokens. Delegation does not transfer ownership — you can undelegate at any time (21-day unbonding period).*
 
@@ -851,14 +875,19 @@ Tokens are emitted on a block-by-block declining schedule across four phases (~6
 | Phase 3 (Stability) | Years 5–10 | 11.42 CITIZEN | ~60,000,000 | 800M → 950M (80–95%) |
 | Phase 4 (Terminal) | Years 10–15 | 5.71 CITIZEN | ~30,000,000 | 950M → 1,000M (100%) |
 
-### 15.3 Allocation Split (per block)
+### 15.3 Two-Layer Distribution (per block and per revenue stream)
 
-| Recipient | Share |
-|---|---|
-| Stakers | 80% of emissions |
-| Treasury | 20% of emissions |
+Citizen Ledger uses a two-layer distribution model. Each income type has its own split:
 
-The treasury share ensures continuous public-benefit funding throughout the emission schedule. After emissions end, the protocol sustains itself through transaction fees and revenue from funded assets.
+| Income Type | Stakers / Validators | Treasury |
+|---|---|---|
+| Block emissions | 75% | 25% |
+| Transaction fees | 80% | 20% |
+| Infrastructure revenue (hospitals, factories) | 40% | 60% |
+| Patent / IP royalties | 50% | 50% |
+| Slashed tokens | 0% | 100% |
+
+The higher treasury share on infrastructure revenue ensures a compounding reinvestment cycle: treasury builds assets → assets generate revenue → 60% flows back to treasury → treasury builds more assets. After emissions end, the protocol sustains itself through transaction fees and real-world revenue from funded assets.
 
 ### 15.4 No Pre-mine, No VC Allocation
 
