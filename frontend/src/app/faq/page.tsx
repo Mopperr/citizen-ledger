@@ -204,7 +204,7 @@ const faqItems: FAQItem[] = [
       <p>
         CITIZEN is the native token of the Citizen Ledger network. It is used for
         staking (earning rewards), governance (voting on proposals), and
-        accessing treasury-funded services. The total supply is capped at 1
+        accessing treasury-funded services. The total supply is capped at 10
         billion CITIZEN with a declining emission schedule.
       </p>
     ),
@@ -267,7 +267,7 @@ const faqItems: FAQItem[] = [
           <li><strong>Vote:</strong> Active governance participants earn a yield multiplier on top of staking rewards.</li>
           <li><strong>Run a node:</strong> Operate a validator (even from a Raspberry Pi) for additional rewards.</li>
           <li><strong>Compound:</strong> Reinvest your staking yields — your rewards earn rewards.</li>
-          <li><strong>Hold:</strong> Supply is capped at 1B while network revenue grows from hospitals, patents, and factories. Each token represents a growing slice of income.</li>
+          <li><strong>Hold:</strong> Supply is capped at 10B while network revenue grows from hospitals, patents, and factories. Each token represents a growing slice of income.</li>
           <li><strong>Provide liquidity:</strong> (future) Earn DEX trading fees by supplying CITIZEN pairs.</li>
         </ol>
         <p className="text-sm text-gray-500">

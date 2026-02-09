@@ -65,7 +65,7 @@ curl -s http://localhost:26657/status | jq '.result.sync_info.latest_block_heigh
 
 | Key       | Role                    | Funded Amount          |
 |-----------|-------------------------|------------------------|
-| admin     | Chain admin + deployer  | 1,000,000,000,000 ucitizen |
+| admin     | Chain admin + deployer  | 10,000,000,000,000 ucitizen |
 | citizen1  | Test citizen            | 10,000,000,000 ucitizen |
 | citizen2  | Test citizen            | 10,000,000,000 ucitizen |
 | citizen3  | Test citizen            | 10,000,000,000 ucitizen |

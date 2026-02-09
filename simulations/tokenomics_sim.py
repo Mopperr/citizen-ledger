@@ -39,7 +39,7 @@ class EmissionPhase:
 class Config:
     """Simulation configuration parameters."""
     # Token supply
-    max_supply: int = 1_000_000_000  # 1 billion CITIZEN
+    max_supply: int = 10_000_000_000  # 10 billion CITIZEN
     initial_supply: int = 100_000_000  # 100 million genesis
     
     # Emission phases

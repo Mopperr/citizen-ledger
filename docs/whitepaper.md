@@ -305,18 +305,18 @@ This is the same model used by modern Ethereum (post-Merge), Cosmos Hub, Osmosis
 
 ### 9.2 Emission Model — Concrete Numbers
 
-CITIZEN has a **hard cap of 1,000,000,000 tokens**. New tokens are minted per block on a declining schedule:
+CITIZEN has a **hard cap of 10,000,000,000 tokens (10 billion)**. New tokens are minted per block on a declining schedule:
 
 | Phase | Duration | Tokens per Block | Blocks/Year* | Annual Emission | Cumulative |
 |---|---|---|---|---|---|
-| Phase 1 (Growth) | Years 0–2 | 47.56 CITIZEN | 5,256,000 | ~250,000,000 | 250,000,000 (25%) |
-| Phase 2 (Maturation) | Years 2–5 | 19.02 CITIZEN | 5,256,000 | ~100,000,000 | 550,000,000 (55%) |
-| Phase 3 (Stability) | Years 5–10 | 11.42 CITIZEN | 5,256,000 | ~60,000,000 | 850,000,000 (85%) |
-| Phase 4 (Terminal) | Years 10–15 | 5.71 CITIZEN | 5,256,000 | ~30,000,000 | 1,000,000,000 (100%) |
+| Phase 1 (Growth) | Years 0–2 | 475.6 CITIZEN | 5,256,000 | ~2,500,000,000 | 2,500,000,000 (25%) |
+| Phase 2 (Maturation) | Years 2–5 | 190.2 CITIZEN | 5,256,000 | ~1,000,000,000 | 5,500,000,000 (55%) |
+| Phase 3 (Stability) | Years 5–10 | 114.2 CITIZEN | 5,256,000 | ~600,000,000 | 8,500,000,000 (85%) |
+| Phase 4 (Terminal) | Years 10–15 | 57.1 CITIZEN | 5,256,000 | ~300,000,000 | 10,000,000,000 (100%) |
 
 *\*Based on ~6-second block time → ~14,400 blocks/day → ~5,256,000 blocks/year.*
 
-Once the cap is reached (estimated year ~15), **no new tokens are minted.** The protocol becomes fully fee-sustained.
+Once the 10 billion cap is reached (estimated year ~15), **no new tokens are minted.** The protocol becomes fully fee-sustained.
 
 ### 9.3 Two-Layer Distribution Model
 
@@ -338,9 +338,9 @@ Every block, newly minted tokens are split 75/25:
 
 | Recipient | Share | Phase 1 per Block | Phase 2 per Block |
 |---|---|---|---|
-| **Validators & Stakers** | 75% | 35.67 CITIZEN | 14.27 CITIZEN |
-| **Treasury** | 25% | 11.89 CITIZEN | 4.76 CITIZEN |
-| **Total** | 100% | 47.56 CITIZEN | 19.02 CITIZEN |
+| **Validators & Stakers** | 75% | 356.7 CITIZEN | 142.7 CITIZEN |
+| **Treasury** | 25% | 118.9 CITIZEN | 47.6 CITIZEN |
+| **Total** | 100% | 475.6 CITIZEN | 190.2 CITIZEN |
 
 ### 9.5 Staking Mechanics
 
@@ -359,11 +359,11 @@ The Annual Percentage Yield (APY) for stakers depends on total staked supply. Th
 
 | Phase | Circulating Supply | 40% Staked | Annual Emission to Stakers (75%) | Base Staking APY |
 |---|---|---|---|---|
-| Phase 1 | ~125M (midpoint) | 50M | 187,500,000 | **~375%** (early high, decreasing rapidly) |
-| Phase 2 | ~400M (midpoint) | 160M | 75,000,000 | **~47%** |
-| Phase 3 | ~700M (midpoint) | 280M | 45,000,000 | **~16%** |
-| Phase 4 | ~925M (midpoint) | 370M | 22,500,000 | **~6%** |
-| Post-cap | 1,000M | 400M | 0 (fees + revenue only) | **~4–8%** (fees + infrastructure yield + IP royalties) |
+| Phase 1 | ~1.25B (midpoint) | 500M | 1,875,000,000 | **~375%** (early high, decreasing rapidly) |
+| Phase 2 | ~4B (midpoint) | 1.6B | 750,000,000 | **~47%** |
+| Phase 3 | ~7B (midpoint) | 2.8B | 450,000,000 | **~16%** |
+| Phase 4 | ~9.25B (midpoint) | 3.7B | 225,000,000 | **~6%** |
+| Post-cap | 10B | 4B | 0 (fees + revenue only) | **~4–8%** (fees + infrastructure yield + IP royalties) |
 
 *Note: Phase 1 APY is very high to bootstrap the network. Early stakers earn the most, similar to early Bitcoin miners. APY naturally declines as more tokens enter circulation.*
 
@@ -373,39 +373,39 @@ If you stake and **re-stake all rewards every month** (compounding), here's what
 
 #### Scenario A: Enter at Launch (Phase 1)
 
-Assumes initial purchase of 10,000 CITIZEN at $0.10 each.
+Assumes initial purchase of 100,000 CITIZEN at $0.01 each.
 
 | Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
 |---|---|---|---|
-| Year 1 | 10,000 → 43,200 CITIZEN | +33,200 CITIZEN | ~332% |
-| Year 2 | 43,200 → 108,000 CITIZEN | +98,000 CITIZEN | ~150% (rate declining) |
-| Year 3 | 108,000 → 157,000 CITIZEN | +147,000 CITIZEN | ~45% |
-| Year 5 | 157,000 → 206,000 CITIZEN | +196,000 CITIZEN | ~16% |
-| Year 10 | 206,000 → 268,000 CITIZEN | +258,000 CITIZEN | ~5% |
+| Year 1 | 100,000 → 432,000 CITIZEN | +332,000 CITIZEN | ~332% |
+| Year 2 | 432,000 → 1,080,000 CITIZEN | +980,000 CITIZEN | ~150% (rate declining) |
+| Year 3 | 1,080,000 → 1,570,000 CITIZEN | +1,470,000 CITIZEN | ~45% |
+| Year 5 | 1,570,000 → 2,060,000 CITIZEN | +1,960,000 CITIZEN | ~16% |
+| Year 10 | 2,060,000 → 2,680,000 CITIZEN | +2,580,000 CITIZEN | ~5% |
 
-**Result: Your initial 10,000 CITIZEN grows to ~268,000 CITIZEN through compounding alone — 26.8× your original position.**
+**Result: Your initial 100,000 CITIZEN grows to ~2,680,000 CITIZEN through compounding alone — 26.8× your original position.**
 
 #### Scenario B: Enter at Year 3 (Phase 2)
 
-Assumes purchase of 10,000 CITIZEN at market price.
+Assumes purchase of 100,000 CITIZEN at market price.
 
 | Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
 |---|---|---|---|
-| Year 3 | 10,000 → 14,500 CITIZEN | +4,500 CITIZEN | ~45% |
-| Year 5 | 14,500 → 19,800 CITIZEN | +9,800 CITIZEN | ~17% |
-| Year 10 | 19,800 → 26,100 CITIZEN | +16,100 CITIZEN | ~5.5% |
+| Year 3 | 100,000 → 145,000 CITIZEN | +45,000 CITIZEN | ~45% |
+| Year 5 | 145,000 → 198,000 CITIZEN | +98,000 CITIZEN | ~17% |
+| Year 10 | 198,000 → 261,000 CITIZEN | +161,000 CITIZEN | ~5.5% |
 
-**Result: 10,000 → ~26,100 CITIZEN — 2.6× your position over 7 years.**
+**Result: 100,000 → ~261,000 CITIZEN — 2.6× your position over 7 years.**
 
 #### Scenario C: Enter at Year 6 (Phase 3, Steady State)
 
 | Year | Your Staked Balance | Cumulative Yield Earned | Effective APY (compounded) |
 |---|---|---|---|
-| Year 6 | 10,000 → 11,700 CITIZEN | +1,700 CITIZEN | ~17% |
-| Year 10 | 11,700 → 14,600 CITIZEN | +4,600 CITIZEN | ~5.7% |
-| Year 15 | 14,600 → 17,800 CITIZEN | +7,800 CITIZEN | ~4% (fees + revenue) |
+| Year 6 | 100,000 → 117,000 CITIZEN | +17,000 CITIZEN | ~17% |
+| Year 10 | 117,000 → 146,000 CITIZEN | +46,000 CITIZEN | ~5.7% |
+| Year 15 | 146,000 → 178,000 CITIZEN | +78,000 CITIZEN | ~4% (fees + revenue) |
 
-**Result: 10,000 → ~17,800 CITIZEN — 1.78× over 9 years, sustainable long-term.**
+**Result: 100,000 → ~178,000 CITIZEN — 1.78× over 9 years, sustainable long-term.**
 
 *All scenarios exclude infrastructure yield, governance bonuses, and token price appreciation — actual returns may be higher.*
 
@@ -437,7 +437,7 @@ Slashed tokens are sent to the treasury, not burned — they fund public program
 
 ### 9.10 Post-Cap Economics — How Fees Work After All Tokens Are Minted
 
-Around year ~15, all 1,000,000,000 CITIZEN will have been minted. At that point, **no new tokens are created — ever.** The network must sustain itself entirely through fees and real-world revenue. Here's exactly how that works:
+Around year ~15, all 10,000,000,000 CITIZEN (10 billion) will have been minted. At that point, **no new tokens are created — ever.** The network must sustain itself entirely through fees and real-world revenue. Here's exactly how that works:
 
 #### Where the money comes from (three sources)
 
@@ -484,7 +484,7 @@ By year 15, the protocol will have funded hospitals, warehouses, factories, and 
 **3. Optional Deflationary Mechanisms (governance-controlled)**
 
 Citizens can vote to activate:
-- **Fee burns** — A percentage of transaction fees are permanently burned, reducing supply below 1B. Fewer tokens + same income = each token worth more.
+- **Fee burns** — A percentage of transaction fees are permanently burned, reducing supply below 10B. Fewer tokens + same income = each token worth more.
 - **Buyback & burn** — Treasury uses a portion of revenue to buy CITIZEN on the open market and burn it.
 - **Minimum fee floor** — Governance can set a minimum fee to ensure validators always earn a baseline.
 
@@ -518,27 +518,27 @@ The two-layer split continues — each income type retains its own ratio:
 
 | Income Source | Annual Total | Staker Share | Treasury Share |
 |---|---|---|---|
-| Transaction fees | 9,125,000 CITIZEN | 7,300,000 (80%) | 1,825,000 (20%) |
-| Infrastructure revenue | 40,000,000 CITIZEN | 16,000,000 (40%) | 24,000,000 (60%) |
-| Patent/IP royalties | 6,000,000 CITIZEN | 3,000,000 (50%) | 3,000,000 (50%) |
-| **Totals** | **55,125,000** | **26,300,000** | **28,825,000** |
+| Transaction fees | 91,250,000 CITIZEN | 73,000,000 (80%) | 18,250,000 (20%) |
+| Infrastructure revenue | 400,000,000 CITIZEN | 160,000,000 (40%) | 240,000,000 (60%) |
+| Patent/IP royalties | 60,000,000 CITIZEN | 30,000,000 (50%) | 30,000,000 (50%) |
+| **Totals** | **551,250,000** | **263,000,000** | **288,250,000** |
 
-**Staker pool: ~26.3M CITIZEN/year.** Treasury pool: ~28.8M CITIZEN/year (funds the next wave of hospitals, research, and factories).
+**Staker pool: ~263M CITIZEN/year.** Treasury pool: ~288M CITIZEN/year (funds the next wave of hospitals, research, and factories).
 
-| Role | Your Stake | Share of Staker Pool | Annual Earnings | At $2/CITIZEN |
+| Role | Your Stake | Share of Staker Pool | Annual Earnings | At $0.20/CITIZEN |
 |---|---|---|---|---|
-| Small delegator | 10,000 CITIZEN | 0.0025% | ~658 CITIZEN | ~$1,316 |
-| Large delegator | 100,000 CITIZEN | 0.025% | ~6,575 CITIZEN | ~$13,150 |
-| Home validator (10K self + 200K delegated) | 210,000 CITIZEN weight | 0.053% | ~13,808 CITIZEN + commission | ~$27,616 |
-| Institutional validator (200K self + 5M delegated) | 5,200,000 CITIZEN weight | 1.3% | ~341,900 CITIZEN + commission | ~$683,800 |
+| Small delegator | 100,000 CITIZEN | 0.0025% | ~6,575 CITIZEN | ~$1,315 |
+| Large delegator | 1,000,000 CITIZEN | 0.025% | ~65,750 CITIZEN | ~$13,150 |
+| Home validator (100K self + 2M delegated) | 2,100,000 CITIZEN weight | 0.053% | ~138,080 CITIZEN + commission | ~$27,616 |
+| Institutional validator (2M self + 50M delegated) | 52,000,000 CITIZEN weight | 1.3% | ~3,419,000 CITIZEN + commission | ~$683,800 |
 
-*Assumes 400M total staked. Governance bonus multipliers apply on top of these numbers.*
+*Assumes 4B total staked. Governance bonus multipliers apply on top of these numbers.*
 
 #### Why this is sustainable forever
 
 1. **Fees scale with usage.** More users = more transactions = more fees. The network doesn't need inflation to pay validators.
 2. **Real-world revenue grows.** Every new hospital, patent, or factory adds permanent recurring income to the protocol.
-3. **Supply is fixed (or shrinking).** If governance activates fee burns, supply drops below 1B, making each remaining token more valuable.
+3. **Supply is fixed (or shrinking).** If governance activates fee burns, supply drops below 10B, making each remaining token more valuable.
 4. **No "death spiral" risk.** Unlike pure-emission chains that collapse when rewards dry up, Citizen Ledger has diversified income from real-world assets that don't depend on crypto market conditions.
 5. **Validators are incentivised to support growth.** More network activity = more fee income for validators. Their interests align with the protocol's success.
 
@@ -570,7 +570,7 @@ Citizen Ledger runs on **CometBFT consensus** (the engine behind Cosmos Hub, Osm
 | **Storage** | 256 GB SSD | 1 TB NVMe SSD |
 | **Internet** | 50 Mbps, stable residential | 1 Gbps, enterprise SLA |
 | **Cost** | $50–$200 hardware + electricity | $50–$200/month cloud or co-location |
-| **Min. stake** | 1,000 CITIZEN | 50,000 CITIZEN |
+| **Min. stake** | 10,000 CITIZEN | 500,000 CITIZEN |
 | **Max commission** | 10% | 20% |
 | **Expected uptime** | 95%+ | 99.5%+ |
 
@@ -584,10 +584,10 @@ Total emission per year to stakers (75% of emission):
 
 | Phase | Annual Staker Emission | Per Validator (100 equal validators) | Per Validator per Month |
 |---|---|---|---|
-| Phase 1 | 187,500,000 CITIZEN | 1,875,000 CITIZEN/yr | ~156,250 CITIZEN/mo |
-| Phase 2 | 75,000,000 CITIZEN | 750,000 CITIZEN/yr | ~62,500 CITIZEN/mo |
-| Phase 3 | 45,000,000 CITIZEN | 450,000 CITIZEN/yr | ~37,500 CITIZEN/mo |
-| Phase 4 | 22,500,000 CITIZEN | 225,000 CITIZEN/yr | ~18,750 CITIZEN/mo |
+| Phase 1 | 1,875,000,000 CITIZEN | 18,750,000 CITIZEN/yr | ~1,562,500 CITIZEN/mo |
+| Phase 2 | 750,000,000 CITIZEN | 7,500,000 CITIZEN/yr | ~625,000 CITIZEN/mo |
+| Phase 3 | 450,000,000 CITIZEN | 4,500,000 CITIZEN/yr | ~375,000 CITIZEN/mo |
+| Phase 4 | 225,000,000 CITIZEN | 2,250,000 CITIZEN/yr | ~187,500 CITIZEN/mo |
 
 *Actual per-validator earnings scale with their stake weight. Top validators earn more; smaller validators earn less.*
 
@@ -607,40 +607,40 @@ Validators set a **commission rate** on delegated stake. This is a percentage of
 
 | Commission Rate | You Have Staked | Others Delegate to You | Your Commission Income (Phase 2, APY ~47%) |
 |---|---|---|---|
-| 5% | 10,000 CITIZEN | 100,000 delegated | 5% × 47,000 rewards = 2,350 CITIZEN/yr |
-| 10% | 50,000 CITIZEN | 500,000 delegated | 10% × 235,000 rewards = 23,500 CITIZEN/yr |
-| 5% | 100,000 CITIZEN | 2,000,000 delegated | 5% × 940,000 rewards = 47,000 CITIZEN/yr |
+| 5% | 100,000 CITIZEN | 1,000,000 delegated | 5% × 470,000 rewards = 23,500 CITIZEN/yr |
+| 10% | 500,000 CITIZEN | 5,000,000 delegated | 10% × 2,350,000 rewards = 235,000 CITIZEN/yr |
+| 5% | 1,000,000 CITIZEN | 20,000,000 delegated | 5% × 9,400,000 rewards = 470,000 CITIZEN/yr |
 
 ### 10.4 Worked Example: Home Node Validator (Phase 2, Year 3)
 
-**Setup:** Raspberry Pi 5, 10,000 CITIZEN self-staked, 5% commission, 200,000 CITIZEN delegated to you, 98% uptime.
+**Setup:** Raspberry Pi 5, 100,000 CITIZEN self-staked, 5% commission, 2,000,000 CITIZEN delegated to you, 98% uptime.
 
 | Income Source | Annual Earnings |
 |---|---|
-| Self-stake rewards (10K at ~47% APY) | 4,700 CITIZEN |
-| Commission (5% of delegator rewards: 200K × 47%) | 4,700 CITIZEN |
-| Fee share (proportional: 210K/total_staked × fee pool) | ~120 CITIZEN |
-| Governance bonus (vote on all proposals, 1.8×) | +4,230 CITIZEN bonus |
-| **Total** | **~13,750 CITIZEN/year** |
+| Self-stake rewards (100K at ~47% APY) | 47,000 CITIZEN |
+| Commission (5% of delegator rewards: 2M × 47%) | 47,000 CITIZEN |
+| Fee share (proportional: 2.1M/total_staked × fee pool) | ~1,200 CITIZEN |
+| Governance bonus (vote on all proposals, 1.8×) | +42,300 CITIZEN bonus |
+| **Total** | **~137,500 CITIZEN/year** |
 
-At $0.50/CITIZEN = **~$6,875/year from a Raspberry Pi.**
-At $1.00/CITIZEN = **~$13,750/year.**
+At $0.05/CITIZEN = **~$6,875/year from a Raspberry Pi.**
+At $0.10/CITIZEN = **~$13,750/year.**
 
 **Hardware cost:** ~$100 one-time.   **Electricity:** ~$15/year.   **ROI: Weeks, not years.**
 
 ### 10.5 Worked Example: Institutional Validator (Phase 2, Year 3)
 
-**Setup:** Cloud VPS, 200,000 CITIZEN self-staked, 10% commission, 5,000,000 CITIZEN delegated, 99.9% uptime.
+**Setup:** Cloud VPS, 2,000,000 CITIZEN self-staked, 10% commission, 50,000,000 CITIZEN delegated, 99.9% uptime.
 
 | Income Source | Annual Earnings |
 |---|---|
-| Self-stake rewards (200K at ~47% APY) | 94,000 CITIZEN |
-| Commission (10% of delegator rewards: 5M × 47%) | 235,000 CITIZEN |
-| Fee share | ~6,800 CITIZEN |
-| Governance bonus (1.5× — votes on 75% of proposals) | +70,500 CITIZEN bonus |
-| **Total** | **~406,300 CITIZEN/year** |
+| Self-stake rewards (2M at ~47% APY) | 940,000 CITIZEN |
+| Commission (10% of delegator rewards: 50M × 47%) | 2,350,000 CITIZEN |
+| Fee share | ~68,000 CITIZEN |
+| Governance bonus (1.5× — votes on 75% of proposals) | +705,000 CITIZEN bonus |
+| **Total** | **~4,063,000 CITIZEN/year** |
 
-At $0.50/CITIZEN = **~$203,150/year.**   At $1.00/CITIZEN = **~$406,300/year.**
+At $0.05/CITIZEN = **~$203,150/year.**   At $0.10/CITIZEN = **~$406,300/year.**
 
 **Operating cost:** ~$2,400/year (cloud VPS).
 
@@ -650,10 +650,10 @@ Citizens who don't want to run a node can **delegate** their CITIZEN to any vali
 
 | Your Delegation | Validator Commission | Base APY | Your Effective APY | Annual Earnings |
 |---|---|---|---|---|
-| 1,000 CITIZEN | 5% | 47% (Phase 2) | 44.65% | 447 CITIZEN |
 | 10,000 CITIZEN | 5% | 47% (Phase 2) | 44.65% | 4,465 CITIZEN |
-| 10,000 CITIZEN | 10% | 16% (Phase 3) | 14.4% | 1,440 CITIZEN |
-| 100,000 CITIZEN | 5% | 16% (Phase 3) | 15.2% | 15,200 CITIZEN |
+| 100,000 CITIZEN | 5% | 47% (Phase 2) | 44.65% | 44,650 CITIZEN |
+| 100,000 CITIZEN | 10% | 16% (Phase 3) | 14.4% | 14,400 CITIZEN |
+| 1,000,000 CITIZEN | 5% | 16% (Phase 3) | 15.2% | 152,000 CITIZEN |
 
 *You keep custody of your tokens. Delegation does not transfer ownership — you can undelegate at any time (21-day unbonding period).*
 
@@ -734,7 +734,7 @@ There is only **one type of token: CITIZEN.** But you can own as many CITIZEN as
 |---|---|
 | Token name | CITIZEN |
 | Smallest unit | ucitizen (1 CITIZEN = 1,000,000 ucitizen) |
-| Total supply cap | 1,000,000,000 CITIZEN — once minted, no more are created |
+| Total supply cap | 10,000,000,000 CITIZEN (10 billion) — once minted, no more are created |
 | Who can hold? | Anyone with a wallet — verified citizens get extra governance rights |
 | Can I buy more? | Yes — there is no limit on how many tokens you hold |
 
@@ -745,7 +745,7 @@ Citizens have **six concrete ways** to accumulate more CITIZEN tokens and increa
 #### 1. Staking (Earn New Tokens Every Block)
 Lock your CITIZEN in the staking contract and earn a share of **newly minted tokens + transaction fees** every block (~6 seconds). The more you stake, the larger your share.
 
-> *Example: If total staked supply is 100M CITIZEN and you stake 10,000 CITIZEN, you receive 0.01% of every block's rewards.*
+> *Example: If total staked supply is 10B CITIZEN and you stake 100,000 CITIZEN, you receive 0.001% of every block's rewards.*
 
 #### 2. Governance Participation Bonus
 Citizens who **actively vote on proposals** earn a yield multiplier. If you stake *and* vote, your effective yield is higher than someone who only stakes. This rewards civic engagement, not just capital.
@@ -772,7 +772,7 @@ The price of one CITIZEN token is driven by supply and demand. Here's why demand
 ```
   SUPPLY (fixed)                       DEMAND (growing)
   ─────────────                        ─────────────────
-  ✖ Capped at 1B CITIZEN              ✔ Real income rises each quarter
+  ✖ Capped at 10B CITIZEN             ✔ Real income rises each quarter
   ✖ No inflation after cap             ✔ More hospitals, factories, patents
   ✖ Optional burn (deflationary)       ✔ New citizens join → buy CITIZEN
   ✖ Stakers lock tokens (reduces       ✔ DEX liquidity demand
@@ -786,7 +786,7 @@ The price of one CITIZEN token is driven by supply and demand. Here's why demand
 
 | Metric | Year 1 | Year 3 | Year 5 |
 |---|---|---|---|
-| Your holdings | 10,000 CITIZEN | 13,200 CITIZEN (compounded staking) | 16,800 CITIZEN |
+| Your holdings | 100,000 CITIZEN | 132,000 CITIZEN (compounded staking) | 168,000 CITIZEN |
 | Network revenue stream | 1 hospital | 3 hospitals + 2 patents | 5 hospitals + 8 patents + 1 factory |
 | Your annual yield | ~8% staking only | ~12% staking + infrastructure yield | ~15% all income streams |
 | Governance bonus | +1.2x (you vote) | +1.5x (active voter) | +1.8x (delegate + voter) |
@@ -798,7 +798,7 @@ The price of one CITIZEN token is driven by supply and demand. Here's why demand
 | Factor | Typical Crypto Token | CITIZEN |
 |---|---|---|
 | Income source | None — speculative only | Hospitals, patents, factories, fees |
-| Supply model | Often inflationary forever | Hard capped at 1B |
+| Supply model | Often inflationary forever | Hard capped at 10B |
 | Why price rises | Hype, narratives | Growing real revenue per token |
 | Governance power | Vote weight = wealth | One person, one vote (fair) |
 | Compounding | Only if you trade | Automatic via restaking |
@@ -859,7 +859,7 @@ Citizens buy CITIZEN → Treasury grows → Funds research & buildings
 |---|---|
 | Token Name | CITIZEN |
 | Denomination | ucitizen (1 CITIZEN = 1,000,000 ucitizen) |
-| Maximum Supply | 1,000,000,000 CITIZEN (1 Trillion ucitizen) |
+| Maximum Supply | 10,000,000,000 CITIZEN (10 Trillion ucitizen) |
 | Initial Supply | 0 (all tokens are emitted via the staking contract) |
 | Supply Model | Capped with declining emission schedule |
 | Deflationary Levers | Optional fee burns or buyback (governance vote) |
@@ -870,10 +870,10 @@ Tokens are emitted on a block-by-block declining schedule across four phases (~6
 
 | Phase | Duration | Tokens per Block | Annual Emission | Cumulative Supply |
 |---|---|---|---|---|
-| Phase 1 (Growth) | Years 0–2 | 47.56 CITIZEN | ~250,000,000 | 250M → 500M (25–50%) |
-| Phase 2 (Maturation) | Years 2–5 | 19.02 CITIZEN | ~100,000,000 | 500M → 800M (50–80%) |
-| Phase 3 (Stability) | Years 5–10 | 11.42 CITIZEN | ~60,000,000 | 800M → 950M (80–95%) |
-| Phase 4 (Terminal) | Years 10–15 | 5.71 CITIZEN | ~30,000,000 | 950M → 1,000M (100%) |
+| Phase 1 (Growth) | Years 0–2 | 475.6 CITIZEN | ~2,500,000,000 | 2.5B → 5B (25–50%) |
+| Phase 2 (Maturation) | Years 2–5 | 190.2 CITIZEN | ~1,000,000,000 | 5B → 8B (50–80%) |
+| Phase 3 (Stability) | Years 5–10 | 114.2 CITIZEN | ~600,000,000 | 8B → 9.5B (80–95%) |
+| Phase 4 (Terminal) | Years 10–15 | 57.1 CITIZEN | ~300,000,000 | 9.5B → 10B (100%) |
 
 ### 15.3 Two-Layer Distribution (per block and per revenue stream)
 

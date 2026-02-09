@@ -143,7 +143,7 @@ export default function Home() {
           {[
             { label: "Block Height", value: stats.blockHeight, icon: "⛓️" },
             { label: "Smart Contracts", value: "5", icon: "📜" },
-            { label: "Max Supply", value: "1B CITIZEN", icon: "💰" },
+            { label: "Max Supply", value: "10B CITIZEN", icon: "💰" },
             { label: "Governance Model", value: "1P1V", icon: "🗳️" },
           ].map((stat) => (
             <div
@@ -724,7 +724,7 @@ export default function Home() {
                 {[
                   { label: "Token Name", value: "CITIZEN" },
                   { label: "Denomination", value: "ucitizen (1 CITIZEN = 10⁶ ucitizen)" },
-                  { label: "Max Supply", value: "1,000,000,000 CITIZEN" },
+                  { label: "Max Supply", value: "10,000,000,000 CITIZEN" },
                   { label: "Initial Supply", value: "0 — all tokens emitted via staking" },
                   { label: "Pre-mine", value: "None" },
                   { label: "VC / Team Allocation", value: "None" },
