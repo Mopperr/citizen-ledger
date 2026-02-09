@@ -10,6 +10,9 @@ members = [
 ]
 resolver = "2"
 
+[workspace.package]
+license = "MIT"
+
 [workspace.dependencies]
 cosmwasm-std    = "2.2"
 cosmwasm-schema = "2.2"
