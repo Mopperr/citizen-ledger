@@ -46,7 +46,7 @@ jobs:
       - name: Build wasm binaries
         run: |
           for pkg in credential-registry treasury voting grants staking-emissions; do
-            cargo build -p $pkg --target wasm32-unknown-unknown --release
+            cargo build -p $pkg --lib --target wasm32-unknown-unknown --release
           done
         env:
           RUSTFLAGS: ""  # wasm build doesn't need -Dwarnings
