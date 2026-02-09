@@ -1,0 +1,60 @@
+{
+  "max_supply": 1000000000,
+  "initial_supply": 100000000,
+  "treasury_share_bps": 2000,
+  "phases": [
+    {
+      "label": "Year 1 (Launch)",
+      "start_block": 0,
+      "end_block": 5256000,
+      "tokens_per_block": 100,
+      "description": "High initial emission to bootstrap the network"
+    },
+    {
+      "label": "Year 2-3 (Growth)",
+      "start_block": 5256000,
+      "end_block": 15768000,
+      "tokens_per_block": 50,
+      "description": "Reduced emission as network stabilizes"
+    },
+    {
+      "label": "Year 4-5 (Maturity)",
+      "start_block": 15768000,
+      "end_block": 26280000,
+      "tokens_per_block": 25,
+      "description": "Further reduction as ecosystem is established"
+    },
+    {
+      "label": "Year 6+ (Steady State)",
+      "start_block": 26280000,
+      "end_block": 0,
+      "tokens_per_block": 10,
+      "description": "Long-term sustainable emission rate"
+    }
+  ],
+  "block_time_seconds": 6,
+  "blocks_per_year": 5256000,
+  "simulation_years": 10,
+  "scenarios": {
+    "base": {
+      "description": "Default emission schedule"
+    },
+    "conservative": {
+      "description": "50% lower emissions for slower supply growth",
+      "tokens_multiplier": 0.5
+    },
+    "aggressive": {
+      "description": "2x emissions for faster adoption incentives",
+      "tokens_multiplier": 2.0
+    },
+    "treasury_heavy": {
+      "description": "40% treasury share for public goods funding",
+      "treasury_share_bps": 4000
+    }
+  },
+  "assumptions": {
+    "staking_participation": "30-70% of circulating supply",
+    "treasury_usage": "Research grants, infrastructure, community initiatives",
+    "inflation_target": "<5% annual after year 5"
+  }
+}

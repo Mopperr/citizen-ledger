@@ -28,11 +28,11 @@ export function Navbar() {
     ? `${address.slice(0, 10)}...${address.slice(-6)}`
     : null;
 
-  const providerLabel = provider === "leap" ? "Leap" : "Keplr";
+  const providerLabel = provider === "leap" ? "Leap" : provider === "cosmostation" ? "Cosmostation" : "Keplr";
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             {/* Logo / Brand */}
@@ -56,6 +56,8 @@ export function Navbar() {
                   { href: "/staking", label: "Staking" },
                   { href: "/identity", label: "Identity" },
                   { href: "/transparency", label: "Transparency" },
+                  { href: "/about", label: "About" },
+                  { href: "/faq", label: "FAQ" },
                 ].map((link) => (
                   <Link
                     key={link.href}
@@ -80,7 +82,7 @@ export function Navbar() {
                   <span className="text-sm text-gray-500 font-mono bg-gray-50 px-3 py-1 rounded-lg">
                     {truncatedAddr}
                   </span>
-                  <button onClick={disconnect} className="btn-secondary text-sm">
+                  <button onClick={disconnect} className="btn-secondary text-sm" aria-label="Disconnect wallet">
                     Disconnect
                   </button>
                 </div>
@@ -90,6 +92,9 @@ export function Navbar() {
                     onClick={() => setShowWalletMenu(!showWalletMenu)}
                     disabled={isConnecting}
                     className="btn-primary text-sm"
+                    aria-haspopup="true"
+                    aria-expanded={showWalletMenu}
+                    aria-label="Connect crypto wallet"
                   >
                     {isConnecting ? (
                       <span className="flex items-center gap-2">
@@ -121,13 +126,14 @@ export function Navbar() {
 
                   {/* Wallet picker dropdown */}
                   {showWalletMenu && !isConnecting && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50" role="group" aria-label="Wallet options">
                       <button
                         onClick={() => {
                           setShowWalletMenu(false);
                           connect("keplr");
                         }}
                         className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
+                        role="menuitem"
                       >
                         <span className="text-lg">🟣</span>
                         <div>
@@ -143,6 +149,7 @@ export function Navbar() {
                           connect("leap");
                         }}
                         className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
+                        role="menuitem"
                       >
                         <span className="text-lg">🟢</span>
                         <div>
@@ -152,7 +159,23 @@ export function Navbar() {
                           </div>
                         </div>
                       </button>
-                      <div className="border-t border-gray-100 mt-1 pt-1 px-4 py-2">
+                      <button
+                        onClick={() => {
+                          setShowWalletMenu(false);
+                          connect("cosmostation");
+                        }}
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-sm"
+                        role="menuitem"
+                      >
+                        <span className="text-lg">🔵</span>
+                        <div>
+                          <div className="font-medium text-gray-900">Cosmostation</div>
+                          <div className="text-xs text-gray-400">
+                            Feature-rich Cosmos wallet
+                          </div>
+                        </div>
+                      </button>
+                      <div className="border-t border-gray-100 mt-1 pt-1 px-4 py-2 space-y-1">
                         <button
                           onClick={() => {
                             setShowWalletMenu(false);
@@ -162,17 +185,37 @@ export function Navbar() {
                         >
                           Auto-detect wallet →
                         </button>
+                        <div className="text-xs text-gray-400">
+                          MetaMask user?{" "}
+                          <a href="/faq#wallet" className="text-citizen-600 hover:text-citizen-700 underline">
+                            See FAQ
+                          </a>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
               )}
 
+              {/* GitHub link */}
+              <a
+                href="https://github.com/citizen-ledger"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex items-center text-gray-500 hover:text-gray-800 transition-colors"
+                aria-label="View source on GitHub"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                </svg>
+              </a>
+
               {/* Mobile hamburger */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-                aria-label="Toggle menu"
+                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={mobileMenuOpen}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {mobileMenuOpen ? (
@@ -197,6 +240,8 @@ export function Navbar() {
                 { href: "/staking", label: "Staking" },
                 { href: "/identity", label: "Identity" },
                 { href: "/transparency", label: "Transparency" },
+                { href: "/about", label: "About" },
+                { href: "/faq", label: "FAQ" },
               ].map((link) => (
                 <Link
                   key={link.href}
@@ -207,6 +252,15 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <a
+                href="https://github.com/citizen-ledger"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2 px-3 text-gray-700 hover:bg-citizen-50 hover:text-citizen-700 rounded-lg text-sm font-medium"
+              >
+                GitHub ↗
+              </a>
             </div>
           </div>
         )}
@@ -214,7 +268,7 @@ export function Navbar() {
 
       {/* Error toast */}
       {error && (
-        <div className="fixed top-20 right-4 z-50 max-w-sm animate-slide-in">
+        <div className="fixed top-20 right-4 z-50 max-w-sm animate-slide-in" role="alert" aria-live="assertive">
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 shadow-lg">
             <div className="flex items-start gap-3">
               <span className="text-red-500 text-lg flex-shrink-0">⚠️</span>
@@ -225,6 +279,7 @@ export function Navbar() {
               <button
                 onClick={clearError}
                 className="text-red-400 hover:text-red-600 flex-shrink-0"
+                aria-label="Dismiss error"
               >
                 ✕
               </button>

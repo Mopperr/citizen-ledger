@@ -119,6 +119,86 @@ export default function TransparencyDashboard() {
   const totalStaked = supply ? parseInt(supply.total_staked || "0") : 0;
   const mintProgress = maxSupply > 0 ? (totalMinted / maxSupply) * 100 : 0;
 
+  // ── export helpers
+  function downloadFile(data: string, filename: string, type: string) {
+    const blob = new Blob([data], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportJSON() {
+    const exportData = {
+      exported_at: new Date().toISOString(),
+      chain_id: CHAIN_ID,
+      treasury: {
+        balance: treasuryBalance,
+        total_spent: totalSpent,
+        allocations,
+        spend_history: spendHistory,
+      },
+      governance: {
+        voting_config: votingConfig,
+        proposals,
+      },
+      grants: {
+        total_disbursed: totalDisbursed,
+        grants,
+      },
+      staking: {
+        supply,
+        emission_rate: emissionRate,
+      },
+    };
+    downloadFile(
+      JSON.stringify(exportData, null, 2),
+      `citizen-ledger-transparency-${new Date().toISOString().slice(0, 10)}.json`,
+      "application/json"
+    );
+  }
+
+  function exportCSV() {
+    // Export spend history as CSV (most useful tabular data)
+    const headers = ["Date", "Category", "Amount (ucitizen)", "Amount (CITIZEN)", "Recipient", "Description"];
+    const rows = spendHistory.map((r: any) => [
+      r.timestamp || r.date || "",
+      r.category || "",
+      r.amount || "0",
+      fmt(r.amount || "0"),
+      r.recipient || "",
+      (r.description || r.memo || "").replace(/,/g, ";"),
+    ]);
+
+    // Also append grant data
+    const grantHeaders = ["Grant ID", "Applicant", "Status", "Category", "Amount (ucitizen)", "Disbursed (ucitizen)"];
+    const grantRows = grants.map((g: any) => [
+      g.id || "",
+      g.applicant || "",
+      g.status || "",
+      g.category || "",
+      g.amount || "0",
+      g.total_disbursed || "0",
+    ]);
+
+    let csv = "=== TREASURY SPEND HISTORY ===\n";
+    csv += headers.join(",") + "\n";
+    csv += rows.map((r: string[]) => r.join(",")).join("\n");
+    csv += "\n\n=== GRANTS ===\n";
+    csv += grantHeaders.join(",") + "\n";
+    csv += grantRows.map((r: string[]) => r.join(",")).join("\n");
+
+    downloadFile(
+      csv,
+      `citizen-ledger-transparency-${new Date().toISOString().slice(0, 10)}.csv`,
+      "text/csv"
+    );
+  }
+
   // ── render
   return (
     <div className="space-y-10">
@@ -134,6 +214,24 @@ export default function TransparencyDashboard() {
                 Updated {lastRefresh.toLocaleTimeString()}
               </span>
             )}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportJSON}
+                disabled={loading}
+                className="btn-secondary text-xs px-3 py-1.5 rounded-lg disabled:opacity-50"
+                title="Export all data as JSON"
+              >
+                JSON ↓
+              </button>
+              <button
+                onClick={exportCSV}
+                disabled={loading}
+                className="btn-secondary text-xs px-3 py-1.5 rounded-lg disabled:opacity-50"
+                title="Export as CSV spreadsheet"
+              >
+                CSV ↓
+              </button>
+            </div>
             <button
               onClick={loadAll}
               disabled={loading}

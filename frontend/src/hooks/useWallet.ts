@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// CosmJS Client Hook — connects to Citizen Ledger via Keplr / Leap wallet
+// CosmJS Client Hook — connects to Citizen Ledger via Keplr / Leap / Cosmostation
 // Supports auto-reconnect, multiple wallet providers, and error handling
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -16,7 +16,7 @@ import {
   CHAIN_CONFIG,
 } from "@/config/chain";
 
-type WalletProvider = "keplr" | "leap";
+type WalletProvider = "keplr" | "leap" | "cosmostation";
 
 interface WalletState {
   address: string | null;
@@ -70,6 +70,16 @@ function resolveLeap(): any | null {
   return null;
 }
 
+/** Resolve Cosmostation — uses Keplr-compatible API via cosmostation.providers.keplr */
+function resolveCosmostation(): any | null {
+  const w = window as any;
+  // Cosmostation exposes a Keplr-compatible provider
+  if (w.cosmostation?.providers?.keplr?.enable) return w.cosmostation.providers.keplr;
+  // Fallback: some versions inject directly
+  if (w.cosmostation?.enable) return w.cosmostation;
+  return null;
+}
+
 /** Detect available wallet extensions (synchronous check) */
 function getWalletExtension(provider?: WalletProvider): { ext: any; name: WalletProvider } | null {
   if (typeof window === "undefined") return null;
@@ -81,12 +91,18 @@ function getWalletExtension(provider?: WalletProvider): { ext: any; name: Wallet
     const leap = resolveLeap();
     if (leap) return { ext: leap, name: "leap" };
   }
+  if (provider === "cosmostation") {
+    const cosmo = resolveCosmostation();
+    if (cosmo) return { ext: cosmo, name: "cosmostation" };
+  }
   if (provider === "keplr" && w.keplr) return { ext: w.keplr, name: "keplr" };
 
-  // Auto-detect: Keplr first, then Leap
+  // Auto-detect: Keplr first, then Leap, then Cosmostation
   if (w.keplr) return { ext: w.keplr, name: "keplr" };
   const leap = resolveLeap();
   if (leap) return { ext: leap, name: "leap" };
+  const cosmo = resolveCosmostation();
+  if (cosmo) return { ext: cosmo, name: "cosmostation" };
 
   return null;
 }
@@ -106,9 +122,10 @@ async function getWalletExtensionAsync(
   const checkFn = provider
     ? () => {
         if (provider === "leap") return !!resolveLeap();
+        if (provider === "cosmostation") return !!resolveCosmostation();
         return !!(window as any)[provider];
       }
-    : () => !!(window as any).keplr || !!resolveLeap();
+    : () => !!(window as any).keplr || !!resolveLeap() || !!resolveCosmostation();
 
   const found = await waitForWalletInjection(checkFn);
   if (found) return getWalletExtension(provider);
