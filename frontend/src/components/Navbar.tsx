@@ -11,12 +11,13 @@ export function Navbar() {
     : null;
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo / Brand */}
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold text-citizen-700">
+            <Link href="/" className="text-xl font-bold text-citizen-700 flex items-center gap-2">
+              <span className="w-8 h-8 bg-gradient-to-br from-citizen-500 to-emerald-600 rounded-lg flex items-center justify-center text-white text-sm font-black">CL</span>
               Citizen Ledger
             </Link>
 

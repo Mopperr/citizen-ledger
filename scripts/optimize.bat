@@ -8,7 +8,7 @@ setlocal
 
 cd /d "%~dp0\.."
 set ROOT=%cd%
-set OPTIMIZER_VERSION=0.16.1
+set OPTIMIZER_VERSION=0.17.0
 set IMAGE=cosmwasm/optimizer:%OPTIMIZER_VERSION%
 
 echo ===================================================

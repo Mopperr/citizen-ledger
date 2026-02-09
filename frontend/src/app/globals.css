@@ -13,6 +13,11 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Citizen Ledger theme overrides */
 .card {
   @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
@@ -44,4 +49,18 @@ body {
 
 .badge-pending {
   @apply badge bg-yellow-100 text-yellow-800;
+}
+
+/* Gradient text helper */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-citizen-500 to-emerald-500;
+}
+
+/* Animate pulse for live indicator */
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-gentle-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
 }
