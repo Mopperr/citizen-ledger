@@ -15,10 +15,6 @@ jobs:
   contracts:
     name: Contracts (Rust)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: citizen-ledger
-
     steps:
       - uses: actions/checkout@v4
 
@@ -34,8 +30,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            citizen-ledger/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('citizen-ledger/Cargo.lock') }}
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: ${{ runner.os }}-cargo-
 
       - name: Check formatting
@@ -59,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wasm-contracts
-          path: citizen-ledger/target/wasm32-unknown-unknown/release/*.wasm
+          path: target/wasm32-unknown-unknown/release/*.wasm
           retention-days: 14
 
   # ── Frontend: lint, typecheck, build ───────────────────────────────────────
@@ -68,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: citizen-ledger/frontend
+        working-directory: frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -77,11 +73,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: citizen-ledger/frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Lint
         run: npm run lint
@@ -93,9 +87,6 @@ jobs:
   schemas:
     name: Schema Validation
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: citizen-ledger
     needs: contracts
 
     steps:
@@ -110,8 +101,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            citizen-ledger/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('citizen-ledger/Cargo.lock') }}
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Verify workspace compiles
         run: cargo check --workspace
