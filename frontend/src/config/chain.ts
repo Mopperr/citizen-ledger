@@ -9,7 +9,7 @@ export const REST_ENDPOINT = process.env.NEXT_PUBLIC_REST_ENDPOINT || "http://lo
 export const DENOM = "ucitizen";
 export const DISPLAY_DENOM = "CITIZEN";
 export const DECIMALS = 6;
-export const BECH32_PREFIX = "wasm";
+export const BECH32_PREFIX = process.env.NEXT_PUBLIC_BECH32_PREFIX || "wasm";
 export const GAS_PRICE = "0.025ucitizen";
 
 // Contract addresses — populated after deployment (see scripts/deploy.sh output)

@@ -68,7 +68,7 @@ export default function Home() {
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               {!address ? (
                 <button
-                  onClick={connect}
+                  onClick={() => connect()}
                   disabled={isConnecting}
                   className="bg-white text-citizen-800 font-bold py-3 px-8 rounded-xl text-lg hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 >
@@ -407,7 +407,7 @@ export default function Home() {
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             {!address ? (
               <button
-                onClick={connect}
+                onClick={() => connect()}
                 disabled={isConnecting}
                 className="bg-white text-citizen-800 font-bold py-3 px-8 rounded-xl text-lg hover:bg-gray-100 transition-all"
               >
