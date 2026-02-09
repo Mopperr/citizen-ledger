@@ -35,19 +35,83 @@ interface WalletState {
 
 const STORAGE_KEY = "citizen-ledger-wallet";
 
-/** Detect available wallet extensions */
+/**
+ * Wait for wallet extension to inject into the window object.
+ * Browser extensions inject globals asynchronously — polling ensures we
+ * don't miss them on fast page loads or lazy-injection wallets like Leap.
+ */
+function waitForWalletInjection(
+  check: () => boolean,
+  timeout = 3000,
+  interval = 100
+): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (check()) return resolve(true);
+    const start = Date.now();
+    const timer = setInterval(() => {
+      if (check()) {
+        clearInterval(timer);
+        resolve(true);
+      } else if (Date.now() - start >= timeout) {
+        clearInterval(timer);
+        resolve(false);
+      }
+    }, interval);
+  });
+}
+
+/** Resolve the Leap extension — handles both old (`window.leap`) and new (`window.leap.cosmos`) namespaces */
+function resolveLeap(): any | null {
+  const w = window as any;
+  // Newer Leap versions nest the Cosmos-compatible API under .cosmos
+  if (w.leap?.cosmos?.enable) return w.leap.cosmos;
+  // Older Leap versions expose it directly
+  if (w.leap?.enable) return w.leap;
+  return null;
+}
+
+/** Detect available wallet extensions (synchronous check) */
 function getWalletExtension(provider?: WalletProvider): { ext: any; name: WalletProvider } | null {
   if (typeof window === "undefined") return null;
 
   const w = window as any;
 
   // If user prefers a specific provider, try that first
-  if (provider === "leap" && w.leap) return { ext: w.leap, name: "leap" };
+  if (provider === "leap") {
+    const leap = resolveLeap();
+    if (leap) return { ext: leap, name: "leap" };
+  }
   if (provider === "keplr" && w.keplr) return { ext: w.keplr, name: "keplr" };
 
   // Auto-detect: Keplr first, then Leap
   if (w.keplr) return { ext: w.keplr, name: "keplr" };
-  if (w.leap) return { ext: w.leap, name: "leap" };
+  const leap = resolveLeap();
+  if (leap) return { ext: leap, name: "leap" };
+
+  return null;
+}
+
+/**
+ * Detect wallet with async polling — waits for extension injection.
+ * Use this for user-initiated connects and auto-reconnect.
+ */
+async function getWalletExtensionAsync(
+  provider?: WalletProvider
+): Promise<{ ext: any; name: WalletProvider } | null> {
+  // First try immediately
+  const immediate = getWalletExtension(provider);
+  if (immediate) return immediate;
+
+  // Wait for the specific provider (or any wallet) to inject
+  const checkFn = provider
+    ? () => {
+        if (provider === "leap") return !!resolveLeap();
+        return !!(window as any)[provider];
+      }
+    : () => !!(window as any).keplr || !!resolveLeap();
+
+  const found = await waitForWalletInjection(checkFn);
+  if (found) return getWalletExtension(provider);
 
   return null;
 }
@@ -75,10 +139,10 @@ export const useWallet = create<WalletState>((set, get) => ({
     set({ isConnecting: true, error: null });
 
     try {
-      const wallet = getWalletExtension(preferredProvider);
+      const wallet = await getWalletExtensionAsync(preferredProvider);
       if (!wallet) {
         throw new Error(
-          "No wallet found. Please install Keplr (keplr.app) or Leap (leapwallet.io) browser extension."
+          "No wallet found. Please install Keplr (keplr.app) or Leap (leapwallet.io) browser extension and refresh the page."
         );
       }
 
@@ -150,11 +214,11 @@ export const useWallet = create<WalletState>((set, get) => ({
       if (!stored) return;
 
       const { provider } = JSON.parse(stored) as { provider: WalletProvider };
-      const wallet = getWalletExtension(provider);
+
+      // Wait for the wallet extension to inject (extensions load asynchronously)
+      const wallet = await getWalletExtensionAsync(provider);
       if (!wallet) return;
 
-      // Only auto-reconnect if the wallet extension is available and chain is enabled
-      // Use a short timeout so we don't block the page
       await get().connect(provider);
     } catch {
       // Silently fail — user can manually reconnect

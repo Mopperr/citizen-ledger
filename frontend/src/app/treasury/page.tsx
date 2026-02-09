@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTreasury } from "@/hooks/useContracts";
 import { useWallet } from "@/hooks/useWallet";
 import { DISPLAY_DENOM, DECIMALS } from "@/config/chain";
+import { PageHeader, EmptyState, LoadingSpinner, CategoryTag } from "@/components/ui";
+import StatCard from "@/components/ui/StatCard";
 
 function formatAmount(amount: string | number): string {
   const n = typeof amount === "string" ? parseInt(amount) : amount;
@@ -19,12 +21,13 @@ export default function TreasuryPage() {
   const [allocations, setAllocations] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [depositAmount, setDepositAmount] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const [b, a, h] = await Promise.all([
         getBalance(),
@@ -34,95 +37,144 @@ export default function TreasuryPage() {
       setBalance(b);
       setAllocations(a);
       setHistory(h);
-    } catch {}
-  };
+    } catch {
+      setError("Unable to connect to chain. Treasury data will appear once the network is live.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleDeposit = async () => {
     if (!depositAmount) return;
+    setActionLoading(true);
     try {
       const amountMicro = (parseFloat(depositAmount) * 10 ** DECIMALS).toString();
       await deposit(amountMicro);
       setDepositAmount("");
       await loadData();
     } catch (e: any) {
-      alert(e.message);
+      setError(e.message);
     }
+    setActionLoading(false);
   };
 
-  const categoryColors: Record<string, string> = {
-    infrastructure: "bg-blue-100 text-blue-800",
-    education: "bg-purple-100 text-purple-800",
-    healthcare: "bg-green-100 text-green-800",
-    research: "bg-yellow-100 text-yellow-800",
-    emergency: "bg-red-100 text-red-800",
-    node_incentives: "bg-orange-100 text-orange-800",
-  };
+  const totalSpent = history.reduce(
+    (acc, r) => acc + parseInt(r.amount || "0"),
+    0
+  );
+
+  if (loading) {
+    return (
+      <div>
+        <PageHeader title="Community Treasury" description="Transparent, on-chain fund management with citizen-controlled allocations." icon="🏛️" />
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Community Treasury</h1>
+      <PageHeader
+        title="Community Treasury"
+        description="Transparent, on-chain fund management with citizen-controlled allocations."
+        icon="🏛️"
+        actions={
+          <button onClick={loadData} className="btn-secondary text-sm">
+            Refresh
+          </button>
+        }
+      />
 
-      {/* Balance + Deposit */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="card">
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-            Treasury Balance
-          </h2>
-          <div className="text-3xl font-bold text-citizen-700 mt-2">
-            {balance
-              ? `${formatAmount(balance.total)} ${DISPLAY_DENOM}`
-              : "—"}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start justify-between">
+          <p className="text-sm text-red-700">{error}</p>
+          <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 text-lg leading-none">&times;</button>
+        </div>
+      )}
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard
+          title="Treasury Balance"
+          value={balance ? `${formatAmount(balance.total)} ${DISPLAY_DENOM}` : "—"}
+          icon="💰"
+          accent="citizen"
+        />
+        <StatCard
+          title="Total Spent"
+          value={`${formatAmount(totalSpent)} ${DISPLAY_DENOM}`}
+          icon="📤"
+          accent="yellow"
+        />
+        <StatCard
+          title="Allocations"
+          value={allocations ? allocations.allocations?.length?.toString() || "0" : "—"}
+          subtitle="Category buckets"
+          icon="📊"
+          accent="blue"
+        />
+        <StatCard
+          title="Transactions"
+          value={history.length.toString()}
+          subtitle="Spend records"
+          icon="📋"
+          accent="purple"
+        />
+      </div>
+
+      {/* Deposit Section */}
+      {address && (
+        <div className="card mb-8 border-l-4 border-citizen-200">
+          <h2 className="text-lg font-semibold mb-3">Deposit Funds</h2>
+          <p className="text-sm text-gray-500 mb-4">Contribute to the community treasury to fund public-benefit programs.</p>
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              placeholder={`Amount (${DISPLAY_DENOM})`}
+              value={depositAmount}
+              onChange={(e) => setDepositAmount(e.target.value)}
+              className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-citizen-500 focus:border-transparent"
+            />
+            <button
+              onClick={handleDeposit}
+              disabled={actionLoading || !depositAmount}
+              className="btn-primary disabled:opacity-50"
+            >
+              {actionLoading ? "Depositing..." : "Deposit"}
+            </button>
           </div>
         </div>
-
-        {address && (
-          <div className="card">
-            <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-              Deposit Funds
-            </h2>
-            <div className="flex items-center gap-3 mt-3">
-              <input
-                type="number"
-                placeholder={`Amount (${DISPLAY_DENOM})`}
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
-              />
-              <button onClick={handleDeposit} className="btn-primary">
-                Deposit
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Allocations */}
       <div className="card mb-8">
         <h2 className="text-lg font-semibold mb-4">Fund Allocations</h2>
-        {allocations ? (
-          <div className="space-y-3">
+        {allocations && allocations.allocations?.length > 0 ? (
+          <div className="space-y-4">
             {allocations.allocations.map(([cat, bps]: [string, number]) => (
-              <div key={cat} className="flex items-center gap-3">
-                <span
-                  className={`badge ${categoryColors[cat.toLowerCase()] || "bg-gray-100 text-gray-800"}`}
-                >
-                  {cat}
-                </span>
-                <div className="flex-1 bg-gray-100 rounded-full h-3">
+              <div key={cat}>
+                <div className="flex items-center justify-between mb-1">
+                  <CategoryTag category={cat} size="md" />
+                  <span className="text-sm font-semibold text-gray-700">
+                    {(bps / 100).toFixed(1)}%
+                  </span>
+                </div>
+                <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
                   <div
-                    className="bg-citizen-500 h-3 rounded-full"
+                    className="bg-gradient-to-r from-citizen-400 to-citizen-600 h-3 rounded-full transition-all"
                     style={{ width: `${bps / 100}%` }}
                   />
                 </div>
-                <span className="text-sm text-gray-600 w-12 text-right">
-                  {bps / 100}%
-                </span>
               </div>
             ))}
           </div>
         ) : (
           <p className="text-gray-400 text-sm">
-            Connect to a running chain to view allocations
+            Allocation data will appear once the network is live.
           </p>
         )}
       </div>
@@ -134,39 +186,39 @@ export default function TreasuryPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-gray-500 border-b">
-                  <th className="pb-2">ID</th>
-                  <th className="pb-2">Recipient</th>
-                  <th className="pb-2">Amount</th>
-                  <th className="pb-2">Category</th>
-                  <th className="pb-2">Memo</th>
+                <tr className="text-left text-gray-500 border-b border-gray-200">
+                  <th className="pb-3 font-medium">ID</th>
+                  <th className="pb-3 font-medium">Recipient</th>
+                  <th className="pb-3 font-medium">Amount</th>
+                  <th className="pb-3 font-medium">Category</th>
+                  <th className="pb-3 font-medium">Memo</th>
                 </tr>
               </thead>
               <tbody>
                 {history.map((r) => (
-                  <tr key={r.id} className="border-b border-gray-50">
-                    <td className="py-2">{r.id}</td>
-                    <td className="py-2 font-mono text-xs">
-                      {r.recipient.slice(0, 12)}...
+                  <tr key={r.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 text-gray-400">#{r.id}</td>
+                    <td className="py-3 font-mono text-xs">
+                      {r.recipient?.slice(0, 12)}...{r.recipient?.slice(-6)}
                     </td>
-                    <td className="py-2">
+                    <td className="py-3 font-medium">
                       {formatAmount(r.amount)} {DISPLAY_DENOM}
                     </td>
-                    <td className="py-2">
-                      <span
-                        className={`badge ${categoryColors[r.category.toLowerCase()] || ""}`}
-                      >
-                        {r.category}
-                      </span>
+                    <td className="py-3">
+                      <CategoryTag category={r.category || "unknown"} />
                     </td>
-                    <td className="py-2 text-gray-500">{r.memo}</td>
+                    <td className="py-3 text-gray-500 max-w-[200px] truncate">{r.memo}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="text-gray-400 text-sm">No spending records yet</p>
+          <EmptyState
+            icon="📜"
+            title="No spending records yet"
+            description="Treasury transactions will appear here as funds are allocated to public programs."
+          />
         )}
       </div>
     </div>

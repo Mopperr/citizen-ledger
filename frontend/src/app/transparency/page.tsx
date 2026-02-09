@@ -7,57 +7,16 @@ import {
   useGrants,
   useStaking,
 } from "@/hooks/useContracts";
-import { DISPLAY_DENOM, DECIMALS } from "@/config/chain";
-
-// ── Helpers ─────────────────────────────────────────────────────────────────
+import { DISPLAY_DENOM, DECIMALS, CHAIN_ID } from "@/config/chain";
+import { PageHeader, LoadingSpinner, CategoryTag } from "@/components/ui";
+import StatCard from "@/components/ui/StatCard";
+import StatusBadge from "@/components/ui/StatusBadge";
 
 function fmt(amount: string | number): string {
   const n = typeof amount === "string" ? parseInt(amount) : amount;
   return (n / 10 ** DECIMALS).toLocaleString(undefined, {
     maximumFractionDigits: 2,
   });
-}
-
-function StatusBadge({ label, color }: { label: string; color: string }) {
-  return (
-    <span
-      className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${color}`}
-    >
-      {label}
-    </span>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  subtitle,
-  accent = "citizen",
-}: {
-  title: string;
-  value: string;
-  subtitle?: string;
-  accent?: string;
-}) {
-  const accentMap: Record<string, string> = {
-    citizen: "text-citizen-700",
-    green: "text-green-700",
-    yellow: "text-yellow-700",
-    red: "text-red-700",
-    blue: "text-blue-700",
-    purple: "text-purple-700",
-  };
-  return (
-    <div className="card">
-      <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-        {title}
-      </p>
-      <p className={`text-2xl font-bold mt-1 ${accentMap[accent] || accentMap.citizen}`}>
-        {value}
-      </p>
-      {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
-    </div>
-  );
 }
 
 // ── Main Dashboard ──────────────────────────────────────────────────────────
@@ -163,30 +122,29 @@ export default function TransparencyDashboard() {
   return (
     <div className="space-y-10">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Transparency Dashboard
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Real-time on-chain data &mdash; fully public, no wallet required.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {lastRefresh && (
-            <span className="text-xs text-gray-400">
-              Updated {lastRefresh.toLocaleTimeString()}
-            </span>
-          )}
-          <button
-            onClick={loadAll}
-            disabled={loading}
-            className="btn-primary text-sm px-4 py-2 rounded-lg disabled:opacity-50"
-          >
-            {loading ? "Loading..." : "Refresh"}
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Transparency Dashboard"
+        description="Real-time on-chain data — fully public, no wallet required."
+        icon="🔍"
+        actions={
+          <div className="flex items-center gap-3">
+            {lastRefresh && (
+              <span className="text-xs text-gray-400">
+                Updated {lastRefresh.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              onClick={loadAll}
+              disabled={loading}
+              className="btn-primary text-sm px-4 py-2 rounded-lg disabled:opacity-50"
+            >
+              {loading ? "Loading..." : "Refresh"}
+            </button>
+          </div>
+        }
+      />
+
+      {loading && proposals.length === 0 && <LoadingSpinner />}
 
       {/* ═══════════ TREASURY ═══════════ */}
       <section>
@@ -363,15 +321,6 @@ export default function TransparencyDashboard() {
             </h3>
             <div className="space-y-2">
               {proposals.slice(0, 8).map((p: any, i: number) => {
-                const statusColors: Record<string, string> = {
-                  Active: "bg-green-100 text-green-800",
-                  Timelocked: "bg-yellow-100 text-yellow-800",
-                  Passed: "bg-blue-100 text-blue-800",
-                  Executed: "bg-purple-100 text-purple-800",
-                  Rejected: "bg-red-100 text-red-800",
-                  Cancelled: "bg-gray-100 text-gray-800",
-                  Expired: "bg-gray-100 text-gray-500",
-                };
                 return (
                   <div
                     key={i}
@@ -385,10 +334,7 @@ export default function TransparencyDashboard() {
                         {p.title}
                       </span>
                     </div>
-                    <StatusBadge
-                      label={p.status}
-                      color={statusColors[p.status] || "bg-gray-100 text-gray-600"}
-                    />
+                    <StatusBadge status={p.status} />
                   </div>
                 );
               })}
@@ -445,12 +391,6 @@ export default function TransparencyDashboard() {
                 </thead>
                 <tbody>
                   {grants.slice(0, 10).map((g: any, i: number) => {
-                    const statusColors: Record<string, string> = {
-                      Pending: "bg-yellow-100 text-yellow-800",
-                      Approved: "bg-green-100 text-green-800",
-                      Completed: "bg-blue-100 text-blue-800",
-                      Cancelled: "bg-red-100 text-red-800",
-                    };
                     return (
                       <tr key={i} className="border-b border-gray-50">
                         <td className="py-2 pr-4 text-gray-400">#{g.id}</td>
@@ -464,12 +404,7 @@ export default function TransparencyDashboard() {
                           {fmt(g.total_amount || "0")} {DISPLAY_DENOM}
                         </td>
                         <td className="py-2">
-                          <StatusBadge
-                            label={g.status}
-                            color={
-                              statusColors[g.status] || "bg-gray-100 text-gray-600"
-                            }
-                          />
+                          <StatusBadge status={g.status} />
                         </td>
                       </tr>
                     );
@@ -557,7 +492,7 @@ export default function TransparencyDashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
             <div>
               <span className="text-gray-500">Chain ID</span>
-              <p className="font-mono font-medium">citizen-ledger-1</p>
+              <p className="font-mono font-medium">{CHAIN_ID}</p>
             </div>
             <div>
               <span className="text-gray-500">Native Token</span>

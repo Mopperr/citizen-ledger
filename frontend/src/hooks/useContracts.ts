@@ -128,6 +128,31 @@ export function useGovernance() {
     return client.queryContractSmart(CONTRACTS.voting, { config: {} });
   };
 
+  const listVotes = async (proposalId: number, startAfter?: string, limit?: number) => {
+    if (!client) return [];
+    const res = await client.queryContractSmart(CONTRACTS.voting, {
+      list_votes: { proposal_id: proposalId, start_after: startAfter, limit: limit || 50 },
+    });
+    return res.votes;
+  };
+
+  const getVote = async (proposalId: number, voter: string) => {
+    if (!client) return null;
+    return client.queryContractSmart(CONTRACTS.voting, {
+      get_vote: { proposal_id: proposalId, voter },
+    });
+  };
+
+  const executeProposal = async (proposalId: number) => {
+    if (!signingClient || !address) throw new Error("Wallet not connected");
+    return signingClient.execute(
+      address,
+      CONTRACTS.voting,
+      { execute_proposal: { proposal_id: proposalId } },
+      "auto"
+    );
+  };
+
   return {
     listProposals,
     getProposal,
@@ -135,6 +160,9 @@ export function useGovernance() {
     castVote,
     tallyProposal,
     getVotingConfig,
+    listVotes,
+    getVote,
+    executeProposal,
   };
 }
 
@@ -182,7 +210,14 @@ export function useTreasury() {
     return client.queryContractSmart(CONTRACTS.treasury, { config: {} });
   };
 
-  return { getBalance, getAllocations, getSpendHistory, deposit, getTreasuryConfig };
+  const getCategorySpend = async (category: string) => {
+    if (!client) return null;
+    return client.queryContractSmart(CONTRACTS.treasury, {
+      category_spend: { category },
+    });
+  };
+
+  return { getBalance, getAllocations, getSpendHistory, deposit, getTreasuryConfig, getCategorySpend };
 }
 
 // ── Grants ──────────────────────────────────────────────────────────────────
@@ -247,7 +282,31 @@ export function useGrants() {
     );
   };
 
-  return { listGrants, getGrant, applyForGrant, submitMilestone };
+  const listGrantsByApplicant = async (applicant?: string) => {
+    if (!client) return [];
+    const res = await client.queryContractSmart(CONTRACTS.grants, {
+      list_grants_by_applicant: { applicant: applicant || address, limit: 50 },
+    });
+    return res.grants;
+  };
+
+  const listResearchCategories = async () => {
+    if (!client) return [];
+    const res = await client.queryContractSmart(CONTRACTS.grants, {
+      list_research_categories: {},
+    });
+    return res.categories;
+  };
+
+  const listResearchCycles = async () => {
+    if (!client) return [];
+    const res = await client.queryContractSmart(CONTRACTS.grants, {
+      list_research_cycles: { limit: 50 },
+    });
+    return res.cycles;
+  };
+
+  return { listGrants, getGrant, applyForGrant, submitMilestone, listGrantsByApplicant, listResearchCategories, listResearchCycles };
 }
 
 // ── Staking & Emissions ─────────────────────────────────────────────────────
@@ -308,5 +367,34 @@ export function useStaking() {
     );
   };
 
-  return { getSupply, getStakerInfo, getEmissionRate, stake, unstake, claimRewards };
+  const getPendingRewards = async (addr?: string) => {
+    if (!client) return null;
+    return client.queryContractSmart(CONTRACTS.stakingEmissions, {
+      pending_rewards: { address: addr || address },
+    });
+  };
+
+  const getEmissionSchedule = async () => {
+    if (!client) return null;
+    return client.queryContractSmart(CONTRACTS.stakingEmissions, {
+      emission_schedule: {},
+    });
+  };
+
+  const getStakingConfig = async () => {
+    if (!client) return null;
+    return client.queryContractSmart(CONTRACTS.stakingEmissions, { config: {} });
+  };
+
+  return {
+    getSupply,
+    getStakerInfo,
+    getEmissionRate,
+    stake,
+    unstake,
+    claimRewards,
+    getPendingRewards,
+    getEmissionSchedule,
+    getStakingConfig,
+  };
 }
