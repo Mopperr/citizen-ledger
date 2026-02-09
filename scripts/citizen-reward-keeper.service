@@ -1,0 +1,28 @@
+[Unit]
+Description=Citizen Ledger Reward Distribution Keeper
+After=network.target citizen-ledger.service
+Wants=citizen-ledger.service
+
+[Service]
+Type=simple
+User=citizen
+Group=citizen
+WorkingDirectory=/opt/citizen-ledger/scripts
+EnvironmentFile=/opt/citizen-ledger/scripts/.env
+ExecStart=/usr/bin/python3 /opt/citizen-ledger/scripts/reward-keeper.py
+Restart=always
+RestartSec=10
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/log/citizen-ledger
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=citizen-reward-keeper
+
+[Install]
+WantedBy=multi-user.target

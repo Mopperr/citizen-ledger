@@ -1,0 +1,25 @@
+[package]
+name = "voting"
+version = "0.1.0"
+edition = "2021"
+description = "Governance voting for Citizen Ledger – one-person-one-vote and quadratic voting with credential gating"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+library = []
+
+[dependencies]
+citizen-common   = { path = "../../packages/citizen-common" }
+cosmwasm-std     = { workspace = true }
+cosmwasm-schema  = { workspace = true }
+cw-storage-plus  = { workspace = true }
+cw2              = { workspace = true }
+schemars         = { workspace = true }
+serde            = { workspace = true }
+thiserror        = { workspace = true }
+serde_json       = { workspace = true }
+
+[dev-dependencies]
+cosmwasm-std = { workspace = true }

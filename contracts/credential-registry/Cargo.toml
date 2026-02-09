@@ -1,0 +1,26 @@
+[package]
+name = "credential-registry"
+version = "0.1.0"
+edition = "2021"
+description = "ZK credential registry for Citizen Ledger – issue, verify, and revoke privacy-preserving credentials"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+library = []
+
+[dependencies]
+citizen-common   = { path = "../../packages/citizen-common" }
+cosmwasm-std     = { workspace = true }
+cosmwasm-schema  = { workspace = true }
+cw-storage-plus  = { workspace = true }
+cw2              = { workspace = true }
+schemars         = { workspace = true }
+serde            = { workspace = true }
+thiserror        = { workspace = true }
+sha2             = { workspace = true }
+hex              = { workspace = true }
+
+[dev-dependencies]
+cosmwasm-std = { workspace = true }

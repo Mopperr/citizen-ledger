@@ -1,0 +1,102 @@
+# ─────────────────────────────────────────────────────────────────────
+# Citizen Ledger – Event Indexer Configuration
+# Feeds contract events into a database / dashboard pipeline
+# ─────────────────────────────────────────────────────────────────────
+
+# ── Data Source ──────────────────────────────────────────────────────
+[source]
+chain_id      = "citizen-ledger-1"
+rpc_endpoint  = "http://localhost:26657"
+ws_endpoint   = "ws://localhost:26657/websocket"
+start_height  = 1
+
+# ── Contracts to Index ───────────────────────────────────────────────
+[[contracts]]
+name     = "credential-registry"
+address  = "${CREDENTIAL_REGISTRY_ADDR}"
+events   = [
+    "wasm-instantiate",
+    "wasm-issue_credential",
+    "wasm-revoke_credential",
+    "wasm-add_issuer",
+    "wasm-remove_issuer",
+]
+
+[[contracts]]
+name     = "treasury"
+address  = "${TREASURY_ADDR}"
+events   = [
+    "wasm-instantiate",
+    "wasm-deposit",
+    "wasm-spend",
+    "wasm-update_allocations",
+]
+
+[[contracts]]
+name     = "voting"
+address  = "${VOTING_ADDR}"
+events   = [
+    "wasm-create_proposal",
+    "wasm-cast_vote",
+    "wasm-tally",
+    "wasm-execute_proposal",
+    "wasm-cancel_proposal",
+]
+
+[[contracts]]
+name     = "grants"
+address  = "${GRANTS_ADDR}"
+events   = [
+    "wasm-apply_grant",
+    "wasm-approve",
+    "wasm-submit_milestone",
+    "wasm-approve_milestone",
+    "wasm-reject_grant",
+    "wasm-cancel_grant",
+    "wasm-add_reviewer",
+    "wasm-remove_reviewer",
+]
+
+[[contracts]]
+name     = "staking-emissions"
+address  = "${STAKING_ADDR}"
+events   = [
+    "wasm-stake",
+    "wasm-unstake",
+    "wasm-claim_rewards",
+    "wasm-distribute_emissions",
+    "wasm-slash",
+    "wasm-update_slash_penalty",
+]
+
+# ── Database Sink ────────────────────────────────────────────────────
+[sink]
+type       = "postgres"
+connection = "postgres://citizen:citizen@localhost:5432/citizen_indexer"
+
+[sink.tables]
+events     = "contract_events"
+blocks     = "indexed_blocks"
+proposals  = "governance_proposals"
+votes      = "governance_votes"
+credentials = "citizen_credentials"
+grants     = "grant_records"
+slashes    = "slash_events"
+stakers    = "staker_snapshots"
+
+# ── Processing ───────────────────────────────────────────────────────
+[processing]
+batch_size        = 100
+poll_interval_ms  = 1000
+retry_max         = 5
+retry_delay_ms    = 2000
+
+# ── Alerting ─────────────────────────────────────────────────────────
+[alerts]
+enabled = true
+# Webhook for critical events (slashing, emergency proposals)
+webhook_url = "${ALERT_WEBHOOK_URL}"
+alert_on = [
+    "wasm-slash",
+    "wasm-execute_proposal",
+]

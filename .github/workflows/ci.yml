@@ -1,0 +1,117 @@
+name: Citizen Ledger CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  # ── Rust: lint, test, build wasm ───────────────────────────────────────────
+  contracts:
+    name: Contracts (Rust)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: citizen-ledger
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            citizen-ledger/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('citizen-ledger/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Clippy lint
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Run unit tests
+        run: cargo test --workspace
+
+      - name: Build wasm binaries
+        run: cargo build --target wasm32-unknown-unknown --release
+        env:
+          RUSTFLAGS: ""  # wasm build doesn't need -Dwarnings
+
+      - name: List wasm artifacts
+        run: ls -lh target/wasm32-unknown-unknown/release/*.wasm
+
+      - name: Upload wasm artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-contracts
+          path: citizen-ledger/target/wasm32-unknown-unknown/release/*.wasm
+          retention-days: 14
+
+  # ── Frontend: lint, typecheck, build ───────────────────────────────────────
+  frontend:
+    name: Frontend (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: citizen-ledger/frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: citizen-ledger/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+  # ── Schema Generation (optional, can validate JSON schemas) ────────────────
+  schemas:
+    name: Schema Validation
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: citizen-ledger
+    needs: contracts
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            citizen-ledger/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('citizen-ledger/Cargo.lock') }}
+
+      - name: Verify workspace compiles
+        run: cargo check --workspace

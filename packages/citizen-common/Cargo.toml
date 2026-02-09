@@ -1,0 +1,13 @@
+[package]
+name = "citizen-common"
+version = "0.1.0"
+edition = "2021"
+description = "Shared types and helpers for Citizen Ledger contracts"
+
+[dependencies]
+cosmwasm-std    = { workspace = true }
+cosmwasm-schema = { workspace = true }
+schemars        = { workspace = true }
+serde           = { workspace = true }
+sha2            = { workspace = true }
+thiserror       = { workspace = true }

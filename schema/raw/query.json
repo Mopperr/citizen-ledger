@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QueryMsg",
+  "oneOf": [
+    {
+      "description": "Get staker info",
+      "type": "object",
+      "required": [
+        "staker"
+      ],
+      "properties": {
+        "staker": {
+          "type": "object",
+          "required": [
+            "address"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Get pending rewards for a staker",
+      "type": "object",
+      "required": [
+        "pending_rewards"
+      ],
+      "properties": {
+        "pending_rewards": {
+          "type": "object",
+          "required": [
+            "address"
+          ],
+          "properties": {
+            "address": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Get current emission rate",
+      "type": "object",
+      "required": [
+        "current_emission_rate"
+      ],
+      "properties": {
+        "current_emission_rate": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Get all emission phases",
+      "type": "object",
+      "required": [
+        "emission_schedule"
+      ],
+      "properties": {
+        "emission_schedule": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Get supply statistics",
+      "type": "object",
+      "required": [
+        "supply"
+      ],
+      "properties": {
+        "supply": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "description": "Get contract config",
+      "type": "object",
+      "required": [
+        "config"
+      ],
+      "properties": {
+        "config": {
+          "type": "object",
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

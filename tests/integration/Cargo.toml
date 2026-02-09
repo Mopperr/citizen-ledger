@@ -1,0 +1,26 @@
+[package]
+name = "integration-tests"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# Contracts under test
+credential-registry = { path = "../../contracts/credential-registry" }
+treasury            = { path = "../../contracts/treasury" }
+voting              = { path = "../../contracts/voting" }
+grants              = { path = "../../contracts/grants" }
+staking-emissions   = { path = "../../contracts/staking-emissions" }
+citizen-common      = { path = "../../packages/citizen-common" }
+
+# CosmWasm
+cosmwasm-std    = { workspace = true }
+cosmwasm-schema = { workspace = true }
+cw-multi-test   = { workspace = true }
+cw2             = { workspace = true }
+
+# Utilities
+serde           = { workspace = true }
+serde_json      = { workspace = true }
+sha2            = { workspace = true }
+hex             = { workspace = true }

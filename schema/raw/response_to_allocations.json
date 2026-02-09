@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AllocationsResponse",
+  "type": "object",
+  "required": [
+    "allocations"
+  ],
+  "properties": {
+    "allocations": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": [
+          {
+            "$ref": "#/definitions/FundCategory"
+          },
+          {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0
+          }
+        ],
+        "maxItems": 2,
+        "minItems": 2
+      }
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "FundCategory": {
+      "description": "Treasury fund allocation categories",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "research",
+            "healthcare",
+            "infrastructure",
+            "education",
+            "emergency",
+            "node_incentives"
+          ]
+        },
+        {
+          "type": "object",
+          "required": [
+            "custom"
+          ],
+          "properties": {
+            "custom": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

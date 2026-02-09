@@ -1,0 +1,24 @@
+[package]
+name = "treasury"
+version = "0.1.0"
+edition = "2021"
+description = "Community treasury for Citizen Ledger – manages funds, allocations, and transparent spending"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+library = []
+
+[dependencies]
+citizen-common   = { path = "../../packages/citizen-common" }
+cosmwasm-std     = { workspace = true }
+cosmwasm-schema  = { workspace = true }
+cw-storage-plus  = { workspace = true }
+cw2              = { workspace = true }
+schemars         = { workspace = true }
+serde            = { workspace = true }
+thiserror        = { workspace = true }
+
+[dev-dependencies]
+cosmwasm-std = { workspace = true }
