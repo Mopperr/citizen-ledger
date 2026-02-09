@@ -62,6 +62,10 @@ pub enum ExecuteMsg {
     CloseResearchCycle { cycle_id: u64 },
 }
 
+/// Message for contract migration
+#[cw_serde]
+pub struct MigrateMsg {}
+
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {

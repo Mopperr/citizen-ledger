@@ -2,7 +2,7 @@ use cosmwasm_std::{
     entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Order, Response,
     StdResult,
 };
-use cw2::set_contract_version;
+use cw2::{get_contract_version, set_contract_version};
 use sha2::{Digest, Sha256};
 
 use citizen_common::credential::{Credential, CredentialType, ZkProof};
@@ -629,6 +629,23 @@ fn execute_contest_recovery(
     Ok(Response::new()
         .add_attribute("action", "contest_recovery")
         .add_attribute("recovery_id", recovery_id))
+}
+
+// ── Migrate ─────────────────────────────────────────────────────────
+
+#[entry_point]
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    let version = get_contract_version(deps.storage)?;
+    if version.contract != CONTRACT_NAME {
+        return Err(ContractError::Unauthorized {
+            reason: format!("Cannot migrate from {}", version.contract),
+        });
+    }
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    Ok(Response::new()
+        .add_attribute("action", "migrate")
+        .add_attribute("from_version", version.version)
+        .add_attribute("to_version", CONTRACT_VERSION))
 }
 
 // ── Tests ───────────────────────────────────────────────────────────

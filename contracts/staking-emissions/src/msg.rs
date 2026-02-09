@@ -51,6 +51,10 @@ pub enum ExecuteMsg {
     UpdateSlashPenalty { slash_penalty_bps: u64 },
 }
 
+/// Message for contract migration
+#[cw_serde]
+pub struct MigrateMsg {}
+
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {

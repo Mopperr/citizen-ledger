@@ -34,6 +34,10 @@ pub enum ExecuteMsg {
     TransferAdmin { new_admin: String },
 }
 
+/// Message for contract migration
+#[cw_serde]
+pub struct MigrateMsg {}
+
 #[cw_serde]
 #[derive(QueryResponses)]
 pub enum QueryMsg {

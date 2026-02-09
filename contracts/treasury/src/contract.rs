@@ -2,7 +2,7 @@ use cosmwasm_std::{
     entry_point, to_json_binary, BankMsg, Binary, Coin, Deps, DepsMut, Env, MessageInfo, Order,
     Response, StdResult, Uint128,
 };
-use cw2::set_contract_version;
+use cw2::{get_contract_version, set_contract_version};
 
 use citizen_common::errors::ContractError;
 use citizen_common::treasury::FundCategory;
@@ -346,6 +346,23 @@ fn query_config(deps: Deps) -> StdResult<TreasuryConfigResponse> {
         total_deposited: TOTAL_DEPOSITED.load(deps.storage)?,
         total_spent: TOTAL_SPENT.load(deps.storage)?,
     })
+}
+
+// ── Migrate ─────────────────────────────────────────────────────────
+
+#[entry_point]
+pub fn migrate(deps: DepsMut, _env: Env, _msg: MigrateMsg) -> Result<Response, ContractError> {
+    let version = get_contract_version(deps.storage)?;
+    if version.contract != CONTRACT_NAME {
+        return Err(ContractError::Unauthorized {
+            reason: format!("Cannot migrate from {}", version.contract),
+        });
+    }
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    Ok(Response::new()
+        .add_attribute("action", "migrate")
+        .add_attribute("from_version", version.version)
+        .add_attribute("to_version", CONTRACT_VERSION))
 }
 
 // ── Tests ───────────────────────────────────────────────────────────
