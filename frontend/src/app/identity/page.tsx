@@ -12,6 +12,7 @@ export default function IdentityPage() {
 
   useEffect(() => {
     if (address) loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
   const loadData = async () => {

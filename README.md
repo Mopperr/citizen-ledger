@@ -67,7 +67,7 @@ cargo build --target wasm32-unknown-unknown --release
 
 ## Test Results
 
-**35 tests pass** across the workspace:
+**37 tests pass** across the workspace:
 
 | Crate | Tests | Coverage |
 |---|---|---|
@@ -75,7 +75,7 @@ cargo build --target wasm32-unknown-unknown --release
 | treasury | 4 | Instantiate, deposit, unauthorized spend, invalid allocations |
 | voting | 4 | Create proposal, 1P1V vote, double-vote rejection, tally |
 | grants | 2 | Apply, full approve + milestone flow |
-| staking-emissions | 3 | Instantiate, stake, emission rate |
+| staking-emissions | 5 | Instantiate, stake, emission rate, supply cap, schedule |
 | **integration** | **17** | Cross-contract: credential→voting, treasury governance, grants lifecycle, full end-to-end flow |
 
 ## Frontend

@@ -187,9 +187,17 @@ export const useWallet = create<WalletState>((set, get) => ({
         error: null,
       });
     } catch (e: any) {
-      const msg = e.message || "Failed to connect wallet";
+      let msg = e.message || "Failed to connect wallet";
+
+      // Provide friendlier messages for common network errors
+      if (msg === "Failed to fetch" || msg.includes("Failed to fetch")) {
+        msg = "Failed to reach the blockchain node. Make sure your local testnet is running (docker compose up).";
+      } else if (msg.includes("Network request failed")) {
+        msg = "Network error — check that the RPC endpoint is reachable.";
+      }
+
       set({ error: msg, isConnecting: false });
-      console.error("Wallet connection error:", msg);
+      console.error("Wallet connection error:", e);
     }
   },
 

@@ -4,8 +4,19 @@
 
 export const CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID || "citizen-ledger-local";
 export const CHAIN_NAME = "Citizen Ledger";
-export const RPC_ENDPOINT = process.env.NEXT_PUBLIC_RPC_ENDPOINT || "http://localhost:26657";
-export const REST_ENDPOINT = process.env.NEXT_PUBLIC_REST_ENDPOINT || "http://localhost:1317";
+
+// Raw endpoints — used by the wallet extension and for the Next.js proxy target
+const RAW_RPC = process.env.NEXT_PUBLIC_RPC_ENDPOINT || "http://localhost:26657";
+const RAW_REST = process.env.NEXT_PUBLIC_REST_ENDPOINT || "http://localhost:1317";
+
+// Browser-safe endpoints — go through the Next.js rewrite proxy to avoid CORS.
+// In production these can be overridden to point directly at the node if CORS is
+// configured, but for local dev the /rpc and /rest proxies just work.
+export const RPC_ENDPOINT =
+  typeof window !== "undefined" ? "/rpc" : RAW_RPC;
+export const REST_ENDPOINT =
+  typeof window !== "undefined" ? "/rest" : RAW_REST;
+
 export const DENOM = "ucitizen";
 export const DISPLAY_DENOM = "CITIZEN";
 export const DECIMALS = 6;
@@ -21,12 +32,13 @@ export const CONTRACTS = {
   stakingEmissions: process.env.NEXT_PUBLIC_STAKING_EMISSIONS || "",
 };
 
-// Keplr chain suggestion config
+// Keplr/Leap chain suggestion config — uses RAW endpoints because the wallet
+// extension contacts the node directly (not through the browser page origin).
 export const CHAIN_CONFIG = {
   chainId: CHAIN_ID,
   chainName: CHAIN_NAME,
-  rpc: RPC_ENDPOINT,
-  rest: REST_ENDPOINT,
+  rpc: RAW_RPC,
+  rest: RAW_REST,
   bip44: { coinType: 118 },
   bech32Config: {
     bech32PrefixAccAddr: BECH32_PREFIX,

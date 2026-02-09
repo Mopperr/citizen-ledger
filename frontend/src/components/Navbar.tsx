@@ -13,6 +13,7 @@ export function Navbar() {
   // Auto-reconnect on mount
   useEffect(() => {
     autoReconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-dismiss errors after 5 seconds
