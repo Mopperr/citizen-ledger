@@ -1,0 +1,116 @@
+services:
+  # Single-node local wasmd testnet with CosmWasm support
+  wasmd-node:
+    image: cosmwasm/wasmd:v0.54.0
+    container_name: citizen-ledger-node
+    ports:
+      - "26657:26657"   # Tendermint RPC
+      - "1317:1317"     # REST / LCD API
+      - "9090:9090"     # gRPC
+    volumes:
+      - wasmd-data:/root/.wasmd
+      - ./target/wasm32-unknown-unknown/release:/wasm:ro
+      - ./scripts:/scripts:ro
+    environment:
+      - CHAIN_ID=citizen-ledger-local
+      - DENOM=ucitizen
+      - MONIKER=local-validator
+    entrypoint: /bin/sh
+    command:
+      - -c
+      - |
+        set -e
+
+        # If already initialized, just start
+        if [ -f /root/.wasmd/config/genesis.json ]; then
+          echo "Node already initialized, starting..."
+          wasmd start --rpc.laddr tcp://0.0.0.0:26657 --api.enable --api.address tcp://0.0.0.0:1317 --grpc.address 0.0.0.0:9090
+          exit 0
+        fi
+
+        echo "=== Initializing Citizen Ledger Local Testnet ==="
+
+        # Init chain
+        wasmd init $$MONIKER --chain-id $$CHAIN_ID
+
+        # Configure for local dev
+        wasmd config set client chain-id $$CHAIN_ID
+        wasmd config set client keyring-backend test
+        wasmd config set app api.enable true
+        wasmd config set app api.address tcp://0.0.0.0:1317
+        wasmd config set app grpc.address 0.0.0.0:9090
+
+        # Set short block time for testing
+        sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/' /root/.wasmd/config/config.toml
+
+        # Update genesis denom from stake to ucitizen
+        sed -i "s/\"stake\"/\"$$DENOM\"/g" /root/.wasmd/config/genesis.json
+
+        # Allow any address to upload wasm (permissionless for testnet)
+        GENESIS=/root/.wasmd/config/genesis.json
+        TMP=$$(mktemp)
+        cat $$GENESIS | python3 -c "
+        import json, sys
+        g = json.load(sys.stdin)
+        g['app_state']['wasm']['params']['code_upload_access'] = {'permission': 'Everybody', 'addresses': []}
+        g['app_state']['wasm']['params']['instantiate_default_permission'] = 'Everybody'
+        json.dump(g, sys.stdout, indent=2)
+        " > $$TMP && mv $$TMP $$GENESIS 2>/dev/null || {
+          # Fallback if python not available — use sed
+          sed -i 's/"permission":"Nobody"/"permission":"Everybody"/g' $$GENESIS
+        }
+
+        # Create test accounts
+        echo "=== Creating test accounts ==="
+        wasmd keys add validator --keyring-backend test 2>&1 | tee /root/validator-key.txt
+        wasmd keys add admin --keyring-backend test 2>&1 | tee /root/admin-key.txt
+        wasmd keys add citizen1 --keyring-backend test 2>&1 | tee /root/citizen1-key.txt
+        wasmd keys add citizen2 --keyring-backend test 2>&1 | tee /root/citizen2-key.txt
+        wasmd keys add faucet --keyring-backend test 2>&1 | tee /root/faucet-key.txt
+
+        # Fund accounts in genesis
+        VALIDATOR_ADDR=$$(wasmd keys show validator -a --keyring-backend test)
+        ADMIN_ADDR=$$(wasmd keys show admin -a --keyring-backend test)
+        CITIZEN1_ADDR=$$(wasmd keys show citizen1 -a --keyring-backend test)
+        CITIZEN2_ADDR=$$(wasmd keys show citizen2 -a --keyring-backend test)
+        FAUCET_ADDR=$$(wasmd keys show faucet -a --keyring-backend test)
+
+        wasmd genesis add-genesis-account $$VALIDATOR_ADDR 1000000000000$$DENOM
+        wasmd genesis add-genesis-account $$ADMIN_ADDR 100000000000$$DENOM
+        wasmd genesis add-genesis-account $$CITIZEN1_ADDR 10000000000$$DENOM
+        wasmd genesis add-genesis-account $$CITIZEN2_ADDR 10000000000$$DENOM
+        wasmd genesis add-genesis-account $$FAUCET_ADDR 500000000000$$DENOM
+
+        # Create validator
+        wasmd genesis gentx validator 500000000000$$DENOM --chain-id $$CHAIN_ID --keyring-backend test
+        wasmd genesis collect-gentxs
+
+        # Validate genesis
+        wasmd genesis validate-genesis
+
+        echo ""
+        echo "=== Local Testnet Initialized ==="
+        echo "Chain ID:   $$CHAIN_ID"
+        echo "Denom:      $$DENOM"
+        echo "Validator:  $$VALIDATOR_ADDR"
+        echo "Admin:      $$ADMIN_ADDR"
+        echo "Citizen 1:  $$CITIZEN1_ADDR"
+        echo "Citizen 2:  $$CITIZEN2_ADDR"
+        echo "Faucet:     $$FAUCET_ADDR"
+        echo ""
+        echo "RPC:  http://localhost:26657"
+        echo "REST: http://localhost:1317"
+        echo "gRPC: localhost:9090"
+        echo "==================================="
+
+        # Start node
+        wasmd start --rpc.laddr tcp://0.0.0.0:26657 --api.enable --api.address tcp://0.0.0.0:1317 --grpc.address 0.0.0.0:9090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  wasmd-data:
